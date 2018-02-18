@@ -6,5 +6,6 @@ dependencies {
 
 	compile group: 'net.java.dev.glazedlists',	name: 'glazedlists_java15', 		version: '1.9.0'
 	
-	compile group: 'org.opt4j',	name: 'opt4j-core', 		version: '3.1.4'
+	compile 'com.github.FedorSmirnovUdacity:opt4j:signing_disabled-SNAPSHOT'
+	//compile group: 'org.opt4j',	name: 'opt4j-core', 		version: '3.1.4'
 }

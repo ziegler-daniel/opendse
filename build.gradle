@@ -1,4 +1,5 @@
 plugins {
+  	id "org.sonarqube" version "2.6"
 	id 'com.github.kt3k.coveralls' version '2.6.3'
 }
 apply plugin: 'base'
@@ -26,9 +27,11 @@ allprojects {
 	apply plugin: 'jacoco'
     
 	repositories {
-    	mavenCentral()
+    		mavenCentral()
 		mavenLocal()
+		maven { url 'https://jitpack.io' }
 	}
+	
 }
 
 subprojects {
@@ -64,9 +67,9 @@ subprojects {
 		archives javadocJar 
 	}
 
-	signing {
-	    sign configurations.archives
-	}
+	//signing {
+	//    sign configurations.archives
+	//}
 	
 	uploadArchives {
 	    repositories {
