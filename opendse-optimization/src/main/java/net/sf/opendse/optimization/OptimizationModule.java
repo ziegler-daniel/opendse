@@ -46,7 +46,7 @@ public class OptimizationModule extends ProblemModule {
 	protected boolean usePreprocessing = true;
 
 	protected boolean stagnationRestartEnabled = true;
-	@Constant(value = "preprocessing", namespace = SATConstraints.class)
+	@Constant(value = "maximalNumberStagnatingGenerations", namespace = StagnationRestart.class)
 	@Required(property = "stagnationRestartEnabled", elements = { "TRUE" })
 	protected int maximalNumberStagnatingGenerations = 20;
 
