@@ -2,6 +2,7 @@ package net.sf.opendse.encoding.interpreter;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -20,19 +21,15 @@ import net.sf.opendse.model.Dependency;
 import net.sf.opendse.model.Link;
 import net.sf.opendse.model.Resource;
 import net.sf.opendse.model.Routings;
+import net.sf.opendse.model.Specification;
 import net.sf.opendse.model.Task;
+import net.sf.opendse.optimization.SpecificationWrapper;
 import net.sf.opendse.optimization.constraints.SpecificationConstraints;
 
 public class InterpreterPreprocessedRoutingsTest {
 
 	@Test
 	public void test() {
-		// create the interpreter
-		SpecificationPostProcessor mockPostProcessor = mock(SpecificationPostProcessor.class);
-		ImplementationEncodingModular mockImplEncoding = mock(ImplementationEncodingModular.class);
-		SpecificationConstraints mockSpecConstraints = mock(SpecificationConstraints.class);
-		InterpreterPreprocessedRoutings interpreter = new InterpreterPreprocessedRoutings(mockPostProcessor,
-				mockImplEncoding, mockSpecConstraints);
 		// create the impl
 		Application<Task, Dependency> appl = new Application<Task, Dependency>();
 		Task t0 = new Task("t0");
@@ -52,7 +49,7 @@ public class InterpreterPreprocessedRoutingsTest {
 		appl.addEdge(dep2, c0, t2, EdgeType.DIRECTED);
 		appl.addEdge(dep3, c1, t3, EdgeType.DIRECTED);
 		appl.addEdge(dep4, c1, t4, EdgeType.DIRECTED);
-		
+
 		Architecture<Resource, Link> arch = new Architecture<Resource, Link>();
 		Resource r0 = new Resource("r0");
 		Resource r1 = new Resource("r1");
@@ -69,7 +66,7 @@ public class InterpreterPreprocessedRoutingsTest {
 		arch.addEdge(l2, r1, r3, EdgeType.UNDIRECTED);
 		arch.addEdge(l3, r2, r3, EdgeType.UNDIRECTED);
 		arch.addEdge(l4, r2, r4, EdgeType.UNDIRECTED);
-		
+
 		Architecture<Resource, Link> c0Routing1 = new Architecture<Resource, Link>();
 		c0Routing1.addEdge(l0, r0, r1, EdgeType.DIRECTED);
 		c0Routing1.addEdge(l2, r1, r3, EdgeType.DIRECTED);
@@ -85,7 +82,7 @@ public class InterpreterPreprocessedRoutingsTest {
 		c1Routing2.addEdge(l3, r2, r3, EdgeType.DIRECTED);
 		c1Routing2.addEdge(l1, r0, r2, EdgeType.DIRECTED);
 		c1Routing2.addEdge(l4, r2, r4, EdgeType.DIRECTED);
-		
+
 		RoutingGraphVariable routingGraphVarc01 = new RoutingGraphVariable(c0, c0Routing1);
 		RoutingGraphVariable routingGraphVarc02 = new RoutingGraphVariable(c0, c0Routing2);
 		RoutingGraphVariable routingGraphVarc11 = new RoutingGraphVariable(c1, c1Routing1);
@@ -100,6 +97,18 @@ public class InterpreterPreprocessedRoutingsTest {
 		model.set(routingGraphVarc02, false);
 		model.set(routingGraphVarc11, false);
 		model.set(routingGraphVarc12, true);
+
+		// create the interpreter
+		SpecificationPostProcessor mockPostProcessor = mock(SpecificationPostProcessor.class);
+		ImplementationEncodingModular mockImplEncoding = mock(ImplementationEncodingModular.class);
+		SpecificationConstraints mockSpecConstraints = mock(SpecificationConstraints.class);
+		Specification mockSpec = mock(Specification.class);
+		when(mockSpec.getArchitecture()).thenReturn(arch);
+		SpecificationWrapper mockWrapper = mock(SpecificationWrapper.class);
+		when(mockWrapper.getSpecification()).thenReturn(mockSpec);
+		InterpreterPreprocessedRoutings interpreter = new InterpreterPreprocessedRoutings(mockPostProcessor,
+				mockImplEncoding, mockSpecConstraints, mockWrapper);
+
 		Routings<Task, Resource, Link> result = interpreter.decodeRoutings(routingVariables, model, appl, arch);
 		Architecture<Resource, Link> routingComm0 = result.get(c0);
 		assertEquals(2, routingComm0.getEdgeCount());
