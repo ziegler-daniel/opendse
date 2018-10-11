@@ -4,6 +4,8 @@ import java.util.Set;
 
 import org.opt4j.satdecoding.Model;
 
+import com.google.inject.Inject;
+
 import edu.uci.ics.jung.graph.util.EdgeType;
 import net.sf.opendse.encoding.ImplementationEncodingModular;
 import net.sf.opendse.encoding.variables.RoutingGraphVariable;
@@ -19,6 +21,7 @@ import net.sf.opendse.optimization.constraints.SpecificationConstraints;
 
 public class InterpreterPreprocessedRoutings extends InterpreterVariable {
 
+	@Inject
 	public InterpreterPreprocessedRoutings(SpecificationPostProcessor postProcessor,
 			ImplementationEncodingModular implementationEncoding, SpecificationConstraints specificationConstraints) {
 		super(postProcessor, implementationEncoding, specificationConstraints);
@@ -48,12 +51,10 @@ public class InterpreterPreprocessedRoutings extends InterpreterVariable {
 	 * Returns a routing architecture, where the elements of the routing are the
 	 * children of the elements in the allocation
 	 * 
-	 * @param routing
-	 *            the routing (captures just the structure, without respecting the
-	 *            parent relation)
-	 * @param implArch
-	 *            the allocation chosen for the implementation (contains the parent
-	 *            elements)
+	 * @param routing  the routing (captures just the structure, without respecting
+	 *                 the parent relation)
+	 * @param implArch the allocation chosen for the implementation (contains the
+	 *                 parent elements)
 	 * @return a routing architecture, where the elements of the routing are the
 	 *         children of the elements in the allocation
 	 */

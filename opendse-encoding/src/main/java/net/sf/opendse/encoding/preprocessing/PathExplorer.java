@@ -23,7 +23,7 @@ import net.sf.opendse.optimization.SpecificationWrapper;
  * @author Zhao Han
  *
  */
-public class PathExplorer implements IPathPreprocessing {
+public class PathExplorer {
 
 	public final static boolean DEBUG = false;
 
@@ -37,14 +37,12 @@ public class PathExplorer implements IPathPreprocessing {
 		architecture = S.getArchitecture();
 	}
 
-	@Override
 	public Set<Architecture<Resource, Link>> getRoutingPossibilities(Resource source, Resource destination) {
 		Set<Architecture<Resource, Link>> routings = new HashSet<Architecture<Resource, Link>>();
 		routings.addAll(findAllPathsUtil(source, destination));
 		return PathFinders.copyClone(routings);
 	}
 
-	@Override
 	public Set<Architecture<Resource, Link>> getRoutingPossibilities(Resource source, Resource destinationA,
 			Resource destinationB) {
 		Set<Architecture<Resource, Link>> routings = new HashSet<Architecture<Resource, Link>>();
@@ -58,7 +56,6 @@ public class PathExplorer implements IPathPreprocessing {
 		return PathFinders.copyClone(routings);
 	}
 
-	@Override
 	public Set<Architecture<Resource, Link>> getRoutingPossibilities(Resource source, Set<Resource> destinations) {
 		Set<Architecture<Resource, Link>> routings = new HashSet<Architecture<Resource, Link>>();
 		Architecture<Resource, Link> routing = new Architecture<Resource, Link>();
@@ -68,8 +65,8 @@ public class PathExplorer implements IPathPreprocessing {
 	}
 
 	/**
-	 * This function intializes the visited list for {@link Depth-First Search},
-	 * and explores all simple paths between {@code src} and {@code dest}
+	 * This function intializes the visited list for {@link Depth-First Search}, and
+	 * explores all simple paths between {@code src} and {@code dest}
 	 * 
 	 * @param src
 	 * @param dest
