@@ -31,19 +31,21 @@ import net.sf.opendse.optimization.SpecificationWrapper;
  */
 public class SpecificationPostProcessorProxy extends SpecificationPostProcessorComposable {
 
-	protected final ProxyRoutingsShortestPath proxyRoutings;
+	protected ProxyRoutingsShortestPath proxyRoutings = null;
 	protected final Architecture<Resource, Link> annotatedArch;
 
 	@Inject
 	public SpecificationPostProcessorProxy(SpecificationWrapper specWrapper,
 			SpecificationPostProcessorMulti postProcessorMulti) {
 		this.annotatedArch = specWrapper.getSpecification().getArchitecture();
-		this.proxyRoutings = new ProxyRoutingsShortestPath(annotatedArch);
 		postProcessorMulti.addPostProcessor(this);
 	}
 
 	@Override
 	public void postProcessImplementation(Specification implementation) {
+		if (proxyRoutings == null) {
+			proxyRoutings = new ProxyRoutingsShortestPath(annotatedArch);
+		}
 		Application<Task, Dependency> appl = implementation.getApplication();
 		Architecture<Resource, Link> arch = implementation.getArchitecture();
 		Mappings<Task, Resource> mappings = implementation.getMappings();
