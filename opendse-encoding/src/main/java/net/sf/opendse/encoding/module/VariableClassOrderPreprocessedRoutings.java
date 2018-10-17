@@ -18,6 +18,6 @@ public class VariableClassOrderPreprocessedRoutings extends VariableClassOrderMo
 	@Inject
 	public VariableClassOrderPreprocessedRoutings(VariableClassOrder order) {
 		super(order);
-		order.add(RoutingGraphVariable.class, T.class);
+		order.add(RoutingGraphVariable.class);
 	}
 }
