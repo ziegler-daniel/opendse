@@ -12,6 +12,7 @@ public class PreprocessedRoutingsModule extends DesignSpaceExplorationModule {
 	protected void config() {
 		bind(InterpreterVariable.class).to(InterpreterPreprocessedRoutings.class);
 		bind(RoutingEncodingFlexible.class).to(RoutingEncodingPP.class);
+		bind(VariableClassOrderPreprocessedRoutings.class).asEagerSingleton();
 	}
 
 }
