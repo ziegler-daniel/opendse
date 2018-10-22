@@ -15,7 +15,7 @@ import net.sf.opendse.model.Resource;
  * @author Fedor Smirnov
  *
  */
-@ImplementedBy(PreprocessedRoutingsBrute.class)
+@ImplementedBy(PreprocessedRoutingsConstructive.class)
 public interface PreprocessedRoutings {
 
 	/**
