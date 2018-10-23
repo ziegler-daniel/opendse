@@ -25,6 +25,7 @@ import net.sf.opendse.encoding.variables.T;
 import net.sf.opendse.encoding.variables.Variables;
 import net.sf.opendse.model.Architecture;
 import net.sf.opendse.model.Link;
+import net.sf.opendse.model.Models;
 import net.sf.opendse.model.Resource;
 import net.sf.opendse.model.Routings;
 import net.sf.opendse.model.Task;
@@ -64,7 +65,8 @@ public class RoutingEncodingPP extends RoutingEncodingFlexible {
 			Set<MappingVariable> mappingVariables, Routings<Task, Resource, Link> routings) {
 		Set<Constraint> result = new HashSet<Constraint>();
 		Map<T, Set<DTT>> applVarMap = makeDependencyMap(applicationVariables);
-		// iterates the comm vars and encodes the constraints for each comm (we assume
+		// iterates the comm vars and encodes the constraints for each comm (we
+		// assume
 		// that each comm and all dependencies are active)
 		for (Entry<T, Set<DTT>> e : applVarMap.entrySet()) {
 			T commVar = e.getKey();
@@ -89,7 +91,8 @@ public class RoutingEncodingPP extends RoutingEncodingFlexible {
 			for (Task destTask : destTasks) {
 				destMappings.add(getMappingVarsForTask(destTask, mappingVariables));
 			}
-			// iterate all combinations of a source resource and destination resource
+			// iterate all combinations of a source resource and destination
+			// resource
 			for (RoutingDescription routingDesc : getAllRoutingDescriptions(srcMappings, destMappings)) {
 				Resource srcRes = ((M) routingDesc.srcMappingVar).getMapping().getTarget();
 				Set<Resource> destRess = new HashSet<Resource>();
@@ -98,7 +101,8 @@ public class RoutingEncodingPP extends RoutingEncodingFlexible {
 				}
 				// get all routings for this combination
 				Set<Architecture<Resource, Link>> allRoutings = preprocessedRoutings.getAllRoutings(srcRes, destRess);
-				// say that each of the routings may only be active if the mapping vars are set
+				// say that each of the routings may only be active if the
+				// mapping vars are set
 				// accordingly
 				// sum(mVar) - N * routingVar >= 0
 				for (Architecture<Resource, Link> routing : allRoutings) {
@@ -114,7 +118,8 @@ public class RoutingEncodingPP extends RoutingEncodingFlexible {
 				// add them to the set of all relevant routings
 				relevantRoutings.addAll(allRoutings);
 			}
-			// state that exactly one of the set of all possible routings has to be chosen
+			// state that exactly one of the set of all possible routings has to
+			// be chosen
 			Constraint chooseOneRoutingConstraint = new Constraint(Operator.EQ, 1);
 			for (Architecture<Resource, Link> routing : relevantRoutings) {
 				chooseOneRoutingConstraint.add(getRoutingLiteral(comm, routing));
@@ -125,7 +130,8 @@ public class RoutingEncodingPP extends RoutingEncodingFlexible {
 	}
 
 	protected Literal getRoutingLiteral(Task communication, Architecture<Resource, Link> routing) {
-		RoutingGraphVariable var = new RoutingGraphVariable(communication, routing);
+		RoutingGraphVariable var = new RoutingGraphVariable(communication,
+				new HashSet<Models.DirectedLink>(Models.getLinks(routing)));
 		Literal lit = new Literal(var, true);
 		if (!pVarCache.containsKey(lit)) {
 			pVarCache.put(lit, lit);
@@ -134,15 +140,15 @@ public class RoutingEncodingPP extends RoutingEncodingFlexible {
 	}
 
 	/**
-	 * Returns the descriptions of all combinations of src and destination mappings
-	 * forming routings.
+	 * Returns the descriptions of all combinations of src and destination
+	 * mappings forming routings.
 	 * 
 	 * @param sourceMappings
 	 *            the possible mappings for the source task
 	 * @param destMappings
 	 *            a list with the possible mappings for all destinations
-	 * @return the descriptions of all combinations of src and destination mappings
-	 *         forming routings
+	 * @return the descriptions of all combinations of src and destination
+	 *         mappings forming routings
 	 */
 	protected Set<RoutingDescription> getAllRoutingDescriptions(List<MappingVariable> sourceMappings,
 			List<List<MappingVariable>> destMappings) {

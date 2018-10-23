@@ -23,6 +23,7 @@ import net.sf.opendse.model.Resource;
 import net.sf.opendse.model.Routings;
 import net.sf.opendse.model.Specification;
 import net.sf.opendse.model.Task;
+import net.sf.opendse.model.Models.DirectedLink;
 import net.sf.opendse.optimization.SpecificationWrapper;
 import net.sf.opendse.optimization.constraints.SpecificationConstraints;
 
@@ -67,21 +68,21 @@ public class InterpreterPreprocessedRoutingsTest {
 		arch.addEdge(l3, r2, r3, EdgeType.UNDIRECTED);
 		arch.addEdge(l4, r2, r4, EdgeType.UNDIRECTED);
 
-		Architecture<Resource, Link> c0Routing1 = new Architecture<Resource, Link>();
-		c0Routing1.addEdge(l0, r0, r1, EdgeType.DIRECTED);
-		c0Routing1.addEdge(l2, r1, r3, EdgeType.DIRECTED);
-		Architecture<Resource, Link> c0Routing2 = new Architecture<Resource, Link>();
-		c0Routing2.addEdge(l1, r0, r2, EdgeType.DIRECTED);
-		c0Routing2.addEdge(l3, r2, r3, EdgeType.DIRECTED);
-		Architecture<Resource, Link> c1Routing1 = new Architecture<Resource, Link>();
-		c1Routing1.addEdge(l0, r0, r1, EdgeType.DIRECTED);
-		c1Routing1.addEdge(l2, r1, r3, EdgeType.DIRECTED);
-		c1Routing1.addEdge(l1, r0, r2, EdgeType.DIRECTED);
-		c1Routing1.addEdge(l4, r2, r4, EdgeType.DIRECTED);
-		Architecture<Resource, Link> c1Routing2 = new Architecture<Resource, Link>();
-		c1Routing2.addEdge(l3, r2, r3, EdgeType.DIRECTED);
-		c1Routing2.addEdge(l1, r0, r2, EdgeType.DIRECTED);
-		c1Routing2.addEdge(l4, r2, r4, EdgeType.DIRECTED);
+		Set<DirectedLink> c0Routing1 = new HashSet<DirectedLink>();
+		c0Routing1.add(new DirectedLink(l0, r0, r1));
+		c0Routing1.add(new DirectedLink(l2, r1, r3));
+		Set<DirectedLink> c0Routing2 = new HashSet<DirectedLink>();
+		c0Routing2.add(new DirectedLink(l1, r0, r2));
+		c0Routing2.add(new DirectedLink(l3, r2, r3));
+		Set<DirectedLink> c1Routing1 = new HashSet<DirectedLink>();
+		c1Routing1.add(new DirectedLink(l0, r0, r1));
+		c1Routing1.add(new DirectedLink(l2, r1, r3));
+		c1Routing1.add(new DirectedLink(l1, r0, r2));
+		c1Routing1.add(new DirectedLink(l4, r2, r4));
+		Set<DirectedLink> c1Routing2 = new HashSet<DirectedLink>();
+		c1Routing2.add(new DirectedLink(l3, r2, r3));
+		c1Routing2.add(new DirectedLink(l1, r0, r2));
+		c1Routing2.add(new DirectedLink(l4, r2, r4));
 
 		RoutingGraphVariable routingGraphVarc01 = new RoutingGraphVariable(c0, c0Routing1);
 		RoutingGraphVariable routingGraphVarc02 = new RoutingGraphVariable(c0, c0Routing2);

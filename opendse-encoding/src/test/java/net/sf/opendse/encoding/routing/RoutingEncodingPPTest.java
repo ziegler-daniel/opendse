@@ -29,6 +29,7 @@ import net.sf.opendse.model.Communication;
 import net.sf.opendse.model.Dependency;
 import net.sf.opendse.model.Link;
 import net.sf.opendse.model.Mapping;
+import net.sf.opendse.model.Models;
 import net.sf.opendse.model.Resource;
 import net.sf.opendse.model.Routings;
 import net.sf.opendse.model.Task;
@@ -43,14 +44,14 @@ public class RoutingEncodingPPTest {
 		RoutingEncodingPP encoding = new RoutingEncodingPP(mockManager, mockPP);
 		@SuppressWarnings("unchecked")
 		Routings<Task, Resource, Link> mockRoutings = mock(Routings.class);
-		
+
 		Resource res0 = new Resource("r0");
 		Resource res1 = new Resource("r1");
 		Resource res2 = new Resource("r2");
 		Resource res3 = new Resource("r3");
 		Resource res4 = new Resource("r4");
 		Resource res5 = new Resource("r5");
-		
+
 		Resource res6 = new Resource("r6");
 		Resource res7 = new Resource("r7");
 		Resource res8 = new Resource("r8");
@@ -73,11 +74,11 @@ public class RoutingEncodingPPTest {
 		Architecture<Resource, Link> routing5 = new Architecture<Resource, Link>();
 		routing5.addVertex(res11);
 		Architecture<Resource, Link> routing6 = new Architecture<Resource, Link>();
-		routing5.addVertex(res12);
+		routing6.addVertex(res12);
 		Architecture<Resource, Link> routing7 = new Architecture<Resource, Link>();
-		routing5.addVertex(res13);
+		routing7.addVertex(res13);
 		Architecture<Resource, Link> routing8 = new Architecture<Resource, Link>();
-		routing5.addVertex(res14);
+		routing8.addVertex(res14);
 		when(mockPP.getAllRoutings(res0, ImmutableSet.of(res2, res3))).thenReturn(ImmutableSet.of(routing0, routing2));
 		when(mockPP.getAllRoutings(res0, ImmutableSet.of(res2, res4))).thenReturn(ImmutableSet.of(routing1, routing3));
 		when(mockPP.getAllRoutings(res0, ImmutableSet.of(res2, res5))).thenReturn(ImmutableSet.of(routing4, routing5));
@@ -122,7 +123,7 @@ public class RoutingEncodingPPTest {
 		applicationVariables.add(dVar0);
 		applicationVariables.add(dVar1);
 		applicationVariables.add(dVar2);
-		
+
 		Set<Constraint> cs = encoding.toConstraints(applicationVariables, mappingVariables, mockRoutings);
 		ConstraintVerifier verifier = new ConstraintVerifier(cs);
 		for (ApplicationVariable applVar : applicationVariables) {
@@ -134,17 +135,26 @@ public class RoutingEncodingPPTest {
 		verifier.deactivateVariable(mv1);
 		verifier.deactivateVariable(mv4);
 		verifier.deactivateVariable(mv5);
-		RoutingGraphVariable routingVar0 = new RoutingGraphVariable(c0, routing0);
-		RoutingGraphVariable routingVar1 = new RoutingGraphVariable(c0, routing1);
-		RoutingGraphVariable routingVar2 = new RoutingGraphVariable(c0, routing2);
-		RoutingGraphVariable routingVar3 = new RoutingGraphVariable(c0, routing3);
-		RoutingGraphVariable routingVar4 = new RoutingGraphVariable(c0, routing4);
-		RoutingGraphVariable routingVar5 = new RoutingGraphVariable(c0, routing5);
-		RoutingGraphVariable routingVar6 = new RoutingGraphVariable(c0, routing6);
-		RoutingGraphVariable routingVar7 = new RoutingGraphVariable(c0, routing7);
-		RoutingGraphVariable routingVar8 = new RoutingGraphVariable(c0, routing8);
+		RoutingGraphVariable routingVar0 = new RoutingGraphVariable(c0,
+				new HashSet<Models.DirectedLink>(Models.getLinks(routing0)));
+		RoutingGraphVariable routingVar1 = new RoutingGraphVariable(c0,
+				new HashSet<Models.DirectedLink>(Models.getLinks(routing1)));
+		RoutingGraphVariable routingVar2 = new RoutingGraphVariable(c0,
+				new HashSet<Models.DirectedLink>(Models.getLinks(routing2)));
+		RoutingGraphVariable routingVar3 = new RoutingGraphVariable(c0,
+				new HashSet<Models.DirectedLink>(Models.getLinks(routing3)));
+		RoutingGraphVariable routingVar4 = new RoutingGraphVariable(c0,
+				new HashSet<Models.DirectedLink>(Models.getLinks(routing4)));
+		RoutingGraphVariable routingVar5 = new RoutingGraphVariable(c0,
+				new HashSet<Models.DirectedLink>(Models.getLinks(routing5)));
+		RoutingGraphVariable routingVar6 = new RoutingGraphVariable(c0,
+				new HashSet<Models.DirectedLink>(Models.getLinks(routing6)));
+		RoutingGraphVariable routingVar7 = new RoutingGraphVariable(c0,
+				new HashSet<Models.DirectedLink>(Models.getLinks(routing7)));
+		RoutingGraphVariable routingVar8 = new RoutingGraphVariable(c0,
+				new HashSet<Models.DirectedLink>(Models.getLinks(routing8)));
 		verifier.deactivateVariable(routingVar2);
-		
+
 		verifier.verifyVariableActivated(routingVar0);
 		verifier.verifyVariableDeactivated(routingVar1);
 		verifier.verifyVariableDeactivated(routingVar3);

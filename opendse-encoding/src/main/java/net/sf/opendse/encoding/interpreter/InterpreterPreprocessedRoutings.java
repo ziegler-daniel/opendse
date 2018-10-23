@@ -14,6 +14,7 @@ import net.sf.opendse.model.Application;
 import net.sf.opendse.model.Architecture;
 import net.sf.opendse.model.Dependency;
 import net.sf.opendse.model.Link;
+import net.sf.opendse.model.Models.DirectedLink;
 import net.sf.opendse.model.Resource;
 import net.sf.opendse.model.Routings;
 import net.sf.opendse.model.Task;
@@ -42,9 +43,11 @@ public class InterpreterPreprocessedRoutings extends InterpreterVariable {
 			if (rVar instanceof RoutingGraphVariable) {
 				RoutingGraphVariable rGraphVar = (RoutingGraphVariable) rVar;
 				if (model.get(rGraphVar)) {
-					Architecture<Resource, Link> routing = rGraphVar.getRouting();
+					Set<DirectedLink> dLinks = rGraphVar.getRouting();
+					// Architecture<Resource, Link> routing =
+					// rGraphVar.getRouting();
 					Task comm = rGraphVar.getCommunication();
-					Architecture<Resource, Link> copyRouting = getChildArchitecture(routing, implementationAllocation);
+					Architecture<Resource, Link> copyRouting = makeRouting(dLinks, implementationAllocation);
 					result.set(comm, copyRouting);
 				}
 			}
@@ -52,16 +55,51 @@ public class InterpreterPreprocessedRoutings extends InterpreterVariable {
 		return result;
 	}
 
+	protected Architecture<Resource, Link> makeRouting(Set<DirectedLink> dirLinks,
+			Architecture<Resource, Link> allocation) {
+		Architecture<Resource, Link> routing = new Architecture<Resource, Link>();
+		for (DirectedLink dirLink : dirLinks) {
+			Link linkLink = dirLink.getLink();
+			Resource linkSrc = dirLink.getSource();
+			Resource linkDest = dirLink.getDest();
+			// get the architecture elements
+			if (!allocation.containsVertex(linkSrc)) {
+				allocation.addVertex((Resource) copy(linkSrc));
+			}
+			Resource allocSrc = allocation.getVertex(linkSrc);
+			if (!allocation.containsVertex(linkDest)) {
+				allocation.addVertex((Resource) copy(linkDest));
+			}
+			Resource allocDest = allocation.getVertex(linkDest);
+			if (!allocation.containsEdge(linkLink)) {
+				Link allocLink = (Link) copy(linkLink);
+				allocation.addEdge(allocLink, allocSrc, allocDest, EdgeType.UNDIRECTED);
+			}
+			Link allocLink = allocation.getEdge(linkLink);
+			Link routingLink = (Link) copy(allocLink);
+			Resource routingSrc = (Resource) copy(allocSrc);
+			Resource routingDest = (Resource) copy(allocDest);
+			if (!routing.containsVertex(routingSrc)) {
+				routing.addVertex(routingSrc);
+			}
+			if (!routing.containsVertex(routingDest)) {
+				routing.addVertex(routingDest);
+			}
+			routing.addEdge(routingLink, routingSrc, routingDest, EdgeType.DIRECTED);
+		}
+		return routing;
+	}
+
 	/**
 	 * Returns a routing architecture, where the elements of the routing are the
 	 * children of the elements in the allocation
 	 * 
 	 * @param routing
-	 *            the routing (captures just the structure, without respecting the
-	 *            parent relation)
+	 *            the routing (captures just the structure, without respecting
+	 *            the parent relation)
 	 * @param implArch
-	 *            the allocation chosen for the implementation (contains the parent
-	 *            elements)
+	 *            the allocation chosen for the implementation (contains the
+	 *            parent elements)
 	 * @return a routing architecture, where the elements of the routing are the
 	 *         children of the elements in the allocation
 	 */
@@ -78,11 +116,9 @@ public class InterpreterPreprocessedRoutings extends InterpreterVariable {
 				Resource specFirst = specArchitecture.getEndpoints(specLink).getFirst();
 				Resource specSecond = specArchitecture.getEndpoints(specLink).getSecond();
 				Resource implFirst = (implArch.getVertex(specFirst.getId()) != null)
-						? implArch.getVertex(specFirst.getId())
-						: (Resource) copy(specFirst);
+						? implArch.getVertex(specFirst.getId()) : (Resource) copy(specFirst);
 				Resource implSecond = (implArch.getVertex(specSecond.getId()) != null)
-						? implArch.getVertex(specSecond.getId())
-						: (Resource) copy(specSecond);
+						? implArch.getVertex(specSecond.getId()) : (Resource) copy(specSecond);
 				implArch.addEdge(allocLink, implFirst, implSecond, EdgeType.UNDIRECTED);
 			}
 			Resource src = implArch.getVertex(routing.getSource(l).getId());
