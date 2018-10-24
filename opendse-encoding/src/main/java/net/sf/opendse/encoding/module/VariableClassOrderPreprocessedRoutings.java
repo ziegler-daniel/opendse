@@ -3,7 +3,6 @@ package net.sf.opendse.encoding.module;
 import com.google.inject.Inject;
 
 import net.sf.opendse.encoding.variables.RoutingGraphVariable;
-import net.sf.opendse.encoding.variables.T;
 import net.sf.opendse.optimization.VariableClassOrder;
 
 /**

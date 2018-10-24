@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.Set;
 
 import com.google.inject.Inject;
+import com.google.inject.Singleton;
 
 import edu.uci.ics.jung.graph.util.EdgeType;
 import net.sf.opendse.model.Architecture;
@@ -24,6 +25,7 @@ import net.sf.opendse.optimization.SpecificationWrapper;
  * @author Fedor Smirnov
  *
  */
+@Singleton
 public class PreprocessedRoutingsConstructive implements PreprocessedRoutings {
 
 	protected class RoutingDescription {
