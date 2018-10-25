@@ -132,11 +132,7 @@ public class RoutingEncodingPP extends RoutingEncodingFlexible {
 	protected Literal getRoutingLiteral(Task communication, Architecture<Resource, Link> routing) {
 		RoutingGraphVariable var = new RoutingGraphVariable(communication,
 				new HashSet<Models.DirectedLink>(Models.getLinks(routing)));
-		Literal lit = new Literal(var, true);
-		if (!pVarCache.containsKey(lit)) {
-			pVarCache.put(lit, lit);
-		}
-		return pVarCache.get(lit);
+		return Variables.p(var);
 	}
 
 	/**
