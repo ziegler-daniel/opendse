@@ -567,7 +567,7 @@ public class InterpreterVariable extends InterpreterAbstract{
 	 * @return a copy of the given {@link Element}
 	 */
 	@SuppressWarnings("unchecked")
-	public <E extends Element> E copy(Element element) {
+	public static <E extends Element> E copy(Element element) {
 		try {
 			Constructor<? extends Element> cstr = element.getClass().getConstructor(Element.class);
 			Element copy = cstr.newInstance(element);

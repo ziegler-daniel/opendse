@@ -87,12 +87,19 @@ public class SpecificationPostProcessorProxy extends SpecificationPostProcessorC
 
 	protected void addLinkToImplementation(DirectedLink dLink, Architecture<Resource, Link> arch,
 			Architecture<Resource, Link> routing) {
-		if (!routing.containsEdge(dLink.getLink())) {
-			routing.addEdge(dLink.getLink(), dLink.getSource(), dLink.getDest(), EdgeType.DIRECTED);
-		}
 		if (!arch.containsEdge(dLink.getLink())) {
-			arch.addEdge(dLink.getLink(), dLink.getSource(), dLink.getDest(), EdgeType.UNDIRECTED);
+			// architecture does not contain link => spec arch link has to be copied
+			Link implLink = InterpreterVariable.copy(dLink.getLink());
+			Resource implSrc = InterpreterVariable.copy(dLink.getSource());
+			Resource implDest = InterpreterVariable.copy(dLink.getDest());
+			arch.addEdge(implLink, implSrc, implDest, EdgeType.UNDIRECTED);
+		}
+		if (!routing.containsEdge(dLink.getLink())) {
+			// routing does not contain link => has to be copied from impl architecture
+			Link routingLink = InterpreterVariable.copy(arch.getEdge(dLink.getLink()));
+			Resource routingSrc = InterpreterVariable.copy(arch.getVertex(dLink.getSource()));
+			Resource routingDest = InterpreterVariable.copy(arch.getVertex(dLink.getDest()));
+			routing.addEdge(routingLink, routingSrc, routingDest, EdgeType.DIRECTED);
 		}
 	}
-
 }
