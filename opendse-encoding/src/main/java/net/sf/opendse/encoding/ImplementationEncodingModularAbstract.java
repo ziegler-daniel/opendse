@@ -45,8 +45,10 @@ public abstract class ImplementationEncodingModularAbstract implements Implement
 	protected final Set<AllocationVariable> allocationVariables;
 	protected final Set<Constraint> constraints;
 
-	public ImplementationEncodingModularAbstract(SpecificationPreprocessor preprocessor, ApplicationEncoding applicationEncoding, MappingEncoding mappingEncoding,
-			RoutingEncoding routingEncoding, AllocationEncoding allocationEncoding, SpecificationWrapper specificationWrapper, SpecificationConstraints specConstraints) {
+	public ImplementationEncodingModularAbstract(SpecificationPreprocessor preprocessor,
+			ApplicationEncoding applicationEncoding, MappingEncoding mappingEncoding, RoutingEncoding routingEncoding,
+			AllocationEncoding allocationEncoding, SpecificationWrapper specificationWrapper,
+			SpecificationConstraints specConstraints) {
 
 		this.preprocessor = preprocessor;
 		this.applicationEncoding = applicationEncoding;
@@ -66,9 +68,9 @@ public abstract class ImplementationEncodingModularAbstract implements Implement
 	public final Set<Constraint> toConstraints() {
 		return this.constraints;
 	}
-	
+
 	@SuppressWarnings("unchecked")
-	protected Set<Constraint> generateTheConstraints(Specification specification){
+	protected Set<Constraint> generateTheConstraints(Specification specification) {
 		Variables.clearCaches();
 		preprocessor.preprocessSpecification(specification);
 		Application<Task, Dependency> application = specification.getApplication();
@@ -98,7 +100,17 @@ public abstract class ImplementationEncodingModularAbstract implements Implement
 		result.addAll(allocationConstraints);
 		result.addAll(formulateAdditionalConstraints());
 		result.addAll(formulateGlobalConstraints());
+		removeEmptyClauses(result);
 		return result;
+	}
+
+	protected void removeEmptyClauses(Set<Constraint> cs) {
+		Set<Constraint> toRemove = new HashSet<Constraint>();
+		for (Constraint c : cs) {
+			if (c.isEmpty())
+				toRemove.add(c);
+		}
+		cs.removeAll(toRemove);
 	}
 
 	@Override
@@ -112,14 +124,16 @@ public abstract class ImplementationEncodingModularAbstract implements Implement
 	}
 
 	/**
-	 * Formulates the constraints that enforce global characteristics of valid implementations.
+	 * Formulates the constraints that enforce global characteristics of valid
+	 * implementations.
 	 * 
-	 * @return the set of constraints that enforce global characteristics of valid implementations
+	 * @return the set of constraints that enforce global characteristics of valid
+	 *         implementations
 	 */
 	protected Set<Constraint> formulateGlobalConstraints() {
 		Set<Constraint> result = new HashSet<Constraint>();
 		DependencyEndPointConstraintGenerator dependencyConstraintGenerator = new DependencyEndPointConstraintGenerator();
-		
+
 		// Dependencies are inactive if one of their end point tasks is inactive
 		result.addAll(dependencyConstraintGenerator.toConstraints(applicationVariables));
 		return result;
