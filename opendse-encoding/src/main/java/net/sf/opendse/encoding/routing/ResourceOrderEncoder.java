@@ -21,6 +21,7 @@ import net.sf.opendse.model.Link;
 import net.sf.opendse.model.Models;
 import net.sf.opendse.model.Resource;
 import net.sf.opendse.model.Task;
+import net.sf.opendse.model.properties.ArchitectureElementPropertyService;
 import net.sf.opendse.model.Models.DirectedLink;
 
 /**
@@ -48,11 +49,16 @@ public class ResourceOrderEncoder {
 			Architecture<Resource, Link> routing) {
 		Task comm = communicationVariable.getTask();
 		// iterates all directed links
+		Set<Resource> resSet = new HashSet<Resource>();
 		Set<Constraint> result = new HashSet<Constraint>();
 		for (DirectedLink dLink : Models.getLinks(routing)) {
-			result.add(makeLinkActivationConstraint(comm, dLink));
+			if (ArchitectureElementPropertyService.getOffersRoutingVariety(dLink.getLink())) {
+				resSet.add(dLink.getSource());
+				resSet.add(dLink.getDest());
+				result.add(makeLinkActivationConstraint(comm, dLink));
+			}
 		}
-		List<Resource> resList = new ArrayList<Resource>(routing.getVertices());
+		List<Resource> resList = new ArrayList<Resource>(resSet);
 		for (int i = 0; i < resList.size() - 1; i++) {
 			// iterates all resource pairs
 			Resource resA = resList.get(i);
