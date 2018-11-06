@@ -16,7 +16,6 @@ import net.sf.opendse.encoding.variables.Variables;
 import net.sf.opendse.model.Dependency;
 import net.sf.opendse.model.Link;
 import net.sf.opendse.model.Mapping;
-import net.sf.opendse.model.Models;
 import net.sf.opendse.model.Resource;
 import net.sf.opendse.model.Specification;
 import net.sf.opendse.model.Task;
@@ -96,16 +95,11 @@ public class ProxyEncoderCompactTest {
 		verifier_c0.deactivateVariable(Variables.varCLRR(c0, l11, r11, r10));
 		verifier_c0.deactivateVariable(Variables.varCLRR(c0, l10, r11, r0));
 		verifier_c0.deactivateVariable(Variables.varCLRR(c0, l10, r0, r11));
-		Set<DirectedLink> inactive = new HashSet<Models.DirectedLink>(Models.getLinks(spec.getArchitecture()));
-		Set<DirectedLink> active = new HashSet<Models.DirectedLink>();
-		active.add(new DirectedLink(l2, r3, r1));
-		active.add(new DirectedLink(l3, r1, r4));
-		active.add(new DirectedLink(l6, r4, r7));
-		active.add(new DirectedLink(l7, r4, r8));
-		inactive.removeAll(active);
-		for (DirectedLink activeLink : active) {
-			verifier_c0.verifyVariableActivated(Variables.varCLRR(c0, activeLink));
-		}
+
+		verifier_c0.verifyVariableActivated(Variables.varCLRR(c0, new DirectedLink(l2, r3, r1)));
+		verifier_c0.verifyVariableActivated(Variables.varCLRR(c0, new DirectedLink(l3, r1, r4)));
+		verifier_c0.verifyVariableActivated(Variables.varCLRR(c0, new DirectedLink(l6, r4, r7)));
+		verifier_c0.verifyVariableActivated(Variables.varCLRR(c0, new DirectedLink(l7, r4, r8)));
 
 		verifier_c0.verifyVariableDeactivated(Variables.varCLRR(c0, new DirectedLink(l2, r1, r3)));
 		verifier_c0.verifyVariableDeactivated(Variables.varCLRR(c0, new DirectedLink(l3, r4, r1)));

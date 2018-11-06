@@ -488,16 +488,14 @@ public class InterpreterTest {
 		Task t = new Task("t");
 		Resource res = new Resource("r");
 		Mapping<Task, Resource> m = new Mapping<Task, Resource>("m", t, res);
-		InterpreterVariable inter = getInterpreter();
-		inter.copy(m);
+		InterpreterVariable.copy(m);
 	}
 
 	@Test
 	public void testCopy() {
-		InterpreterVariable inter = getInterpreter();
 		Element element = new Element("parent");
-		Element child = inter.copy(element);
-		Element secondChild = inter.copy(element);
+		Element child = InterpreterVariable.copy(element);
+		Element secondChild = InterpreterVariable.copy(element);
 		assertEquals(child, secondChild);
 		assertEquals(element, child);
 		assertNotEquals(child, element.getParent());
