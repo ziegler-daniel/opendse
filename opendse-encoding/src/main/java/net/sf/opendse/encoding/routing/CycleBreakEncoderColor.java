@@ -15,6 +15,7 @@ import net.sf.opendse.model.Link;
 import net.sf.opendse.model.Models;
 import net.sf.opendse.model.Resource;
 import net.sf.opendse.model.Task;
+import net.sf.opendse.model.properties.ResourcePropertyService;
 import net.sf.opendse.model.Models.DirectedLink;
 
 /**
@@ -61,6 +62,10 @@ public class CycleBreakEncoderColor implements CycleBreakEncoder {
 		Task comm = commVar.getTask();
 		// iterates all pairs of directed links
 		for (Resource first : routing) {
+			if (!ResourcePropertyService.getProxyId(first).equals(first.getId())) {
+				// proxy resource
+				continue;
+			}
 			for (Link firstLink : routing.getIncidentEdges(first)) {
 				for (Link secondLink : routing.getIncidentEdges(first)) {
 					if (firstLink.equals(secondLink)) {
@@ -111,7 +116,7 @@ public class CycleBreakEncoderColor implements CycleBreakEncoder {
 		
 		return result;
 	}
-
+	
 	/**
 	 * 
 	 * Formulates {@link Constraint}s that result in a 3-coloring of the routing
