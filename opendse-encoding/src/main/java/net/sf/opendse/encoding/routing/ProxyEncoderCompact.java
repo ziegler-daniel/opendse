@@ -39,70 +39,90 @@ public class ProxyEncoderCompact implements ProxyEncoder {
 		Set<Constraint> result = new HashSet<Constraint>();
 		// iterate all resources inside proxy areas
 		for (Resource res : routing) {
-			Set<Variable> srcMappings = new HashSet<Variable>();
-			Set<Variable> destMappings = new HashSet<Variable>();
-			getSrcDestMappings(mappingVariables, applicationVariables, communication, res, result, srcMappings,
-					destMappings);
 			if (insideProxyArea(res, routing)) {
-				result.add(formulateSrcInLinkCondition(communication, srcMappings, destMappings, res, routing));
-				result.add(formulateDestOutLinkCondition(communication, srcMappings, destMappings, res, routing));
+				Set<Variable> srcMappings = new HashSet<Variable>();
+				Set<Variable> destMappings = new HashSet<Variable>();
+				getSrcDestMappings(mappingVariables, applicationVariables, communication, res, result, srcMappings,
+						destMappings);
+				List<DirectedLink> inLinks = Models.getInLinks(routing, res);
+				List<DirectedLink> outLinks = Models.getOutLinks(routing, res);
+				// formulate the constraints for the mapping variables
+				for (Variable srcMapping : srcMappings) {
+					result.add(makeMappingConstraint(communication, srcMapping, destMappings, outLinks));
+				}
+				for (Variable destMapping : destMappings) {
+					result.add(makeMappingConstraint(communication, destMapping, srcMappings, inLinks));
+				}
+				// formulate the constraints for each in-Link
+				for (DirectedLink inLink : inLinks) {
+					result.add(makeLinkConstraint(communication, inLink, destMappings, outLinks));
+				}
+				for (DirectedLink outLink : outLinks) {
+					result.add(makeLinkConstraint(communication, outLink, srcMappings, inLinks));
+				}
 			}
 		}
 		return result;
 	}
 
-	protected Constraint formulateSrcInLinkCondition(Task communication, Set<Variable> srcMappings,
-			Set<Variable> destMappings, Resource res, Architecture<Resource, Link> routing) {
-		return formulateEdgeConstraint(communication, srcMappings, destMappings, res, routing, true);
-	}
-
-	protected Constraint formulateDestOutLinkCondition(Task communication, Set<Variable> srcMappings,
-			Set<Variable> destMappings, Resource res, Architecture<Resource, Link> routing) {
-		return formulateEdgeConstraint(communication, srcMappings, destMappings, res, routing, false);
+	/**
+	 * Generates the constraint stating that the given link may only be active if at
+	 * least one of the enablers is active.
+	 * 
+	 * L_set - (sum(L_enable) + sum(M_enable)) <= 0
+	 * 
+	 * @param communication
+	 *            the routed comm
+	 * @param mappingToSet
+	 *            the link to set
+	 * @param enablingMappings
+	 *            the enabling mappings
+	 * @param enablingLinks
+	 *            the enabling links
+	 * @return the constraint stating that the given link may only be active if at
+	 *         least one of the enablers is active
+	 */
+	protected Constraint makeLinkConstraint(Task communication, DirectedLink linkToSet, Set<Variable> enablingMappings,
+			List<DirectedLink> oppositeLinks) {
+		Constraint result = new Constraint(Operator.LE, 0);
+		result.add(Variables.p(Variables.varCLRR(communication, linkToSet)));
+		for (Variable enablingMapping : enablingMappings) {
+			result.add(-1, Variables.p(enablingMapping));
+		}
+		for (DirectedLink oppositeLink : oppositeLinks) {
+			if (!oppositeLink.getLink().getId().equals(linkToSet.getLink().getId())) {
+				result.add(-1, Variables.p(Variables.varCLRR(communication, oppositeLink)));
+			}
+		}
+		return result;
 	}
 
 	/**
-	 * Formulates the constraint stating that a resource may only have in- (out-)
-	 * -edges or be a src if it has at least one out- (in-)edge or is also the
-	 * destination (src).
+	 * Generates the constraint stating that the given mapping may only be active if
+	 * at least one of the enablers is active.
+	 * 
+	 * M_set - (sum(L_enable) + sum(M_enable)) <= 0
 	 * 
 	 * @param communication
-	 *            the communication that is being routed
-	 * @param srcMappings
-	 *            the set of mapping variables of the src tasks
-	 * @param destMappings
-	 *            the set of mapping variables of the dest tasks
-	 * @param res
-	 *            the current resource
-	 * @param routing
-	 *            the routing graph
-	 * @param srcIn
-	 *            {@code true} if encoding conditions for being src or having
-	 *            in-edges, {@code false} otherwise
-	 * @return the constraint stating that a resource may only have in- (out-)
-	 *         -edges or be a src if it has at least one out- (in-)edge or is also
-	 *         the destination (src)
+	 *            the routed comm
+	 * @param mappingToSet
+	 *            the mapping to set
+	 * @param enablingMappings
+	 *            the enabling mappings
+	 * @param enablingLinks
+	 *            the enabling links
+	 * @return the constraint stating that the given mapping may only be active if
+	 *         at least one of the enablers is active
 	 */
-	protected Constraint formulateEdgeConstraint(Task communication, Set<Variable> srcMappings,
-			Set<Variable> destMappings, Resource res, Architecture<Resource, Link> routing, boolean srcIn) {
+	protected Constraint makeMappingConstraint(Task communication, Variable mappingToSet,
+			Set<Variable> enablingMappings, List<DirectedLink> enablingLinks) {
 		Constraint result = new Constraint(Operator.LE, 0);
-		Set<Variable> consequenceMappings = srcIn ? srcMappings : destMappings;
-		List<DirectedLink> consequenceEdges = srcIn ? Models.getInLinks(routing, res)
-				: Models.getOutLinks(routing, res);
-		Set<Variable> conditionMappings = srcIn ? destMappings : srcMappings;
-		List<DirectedLink> conditionEdges = srcIn ? Models.getOutLinks(routing, res) : Models.getInLinks(routing, res);
-		int constantFactor = consequenceMappings.size() + conditionEdges.size();
-		for (Variable consequenceMapping : consequenceMappings) {
-			result.add(Variables.p(consequenceMapping));
+		result.add(Variables.p(mappingToSet));
+		for (DirectedLink enableLink : enablingLinks) {
+			result.add(-1, Variables.p(Variables.varCLRR(communication, enableLink)));
 		}
-		for (DirectedLink consequenceEdge : consequenceEdges) {
-			result.add(Variables.p(Variables.varCLRR(communication, consequenceEdge)));
-		}
-		for (Variable conditionMapping : conditionMappings) {
-			result.add(-constantFactor, Variables.p(conditionMapping));
-		}
-		for (DirectedLink conditionEdge : conditionEdges) {
-			result.add(-constantFactor, Variables.p(Variables.varCLRR(communication, conditionEdge)));
+		for (Variable enableMapping : enablingMappings) {
+			result.add(-1, Variables.p(enableMapping));
 		}
 		return result;
 	}
