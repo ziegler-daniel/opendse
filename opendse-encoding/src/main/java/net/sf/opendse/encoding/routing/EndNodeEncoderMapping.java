@@ -114,15 +114,14 @@ public class EndNodeEncoderMapping implements EndNodeEncoder {
 			}
 			result.add(constraint3);
 			
-			// sum(M) + DDT_s + DDT_d - |M| * DDeR <= 2
- 			Constraint constraint4 = new Constraint(Operator.LE, 2);
- 			for (M mVar : mappingVars) {
- 				constraint4.add(Variables.p(mVar));
- 			}
- 			constraint4.add(Variables.p(srcDtt));
- 			constraint4.add(Variables.p(destDtt));
- 			constraint4.add(-mappingVars.size(), Variables.p(endNodeVariable));
- 			result.add(constraint4);
+			for (M mVar : mappingVars) {
+				Constraint constraint4 = new Constraint(Operator.LE, 2);
+				constraint4.add(Variables.p(srcDtt));
+				constraint4.add(Variables.p(destDtt));
+				constraint4.add(-1, Variables.p(endNodeVariable));
+				constraint4.add(Variables.p(mVar));
+				result.add(constraint4);
+			}
 		}
 		return result;
 	}
