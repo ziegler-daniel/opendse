@@ -6,7 +6,6 @@ import java.util.Set;
 import org.opt4j.satdecoding.Constraint;
 import org.opt4j.satdecoding.Constraint.Operator;
 
-import net.sf.opendse.encoding.variables.DDR;
 import net.sf.opendse.encoding.variables.DDdR;
 import net.sf.opendse.encoding.variables.DDsR;
 import net.sf.opendse.encoding.variables.Variable;
@@ -52,23 +51,38 @@ public class RoutingEdgeEncoderRedundant implements RoutingEdgeEncoder {
 		Set<Constraint> result = new HashSet<Constraint>();
 		Set<DirectedLink> inLinks = new HashSet<Models.DirectedLink>(Models.getInLinks(routing, res));
 		Set<DirectedLink> outLinks = new HashSet<Models.DirectedLink>(Models.getOutLinks(routing, res));
-		Constraint outLinkConstraint = new Constraint(Operator.GE, 0);
-		Constraint inLinkConstraint = new Constraint(Operator.GE, 0);
-		DDR resourceUsed = Variables.varDDR(flow, res);
-		DDsR resourceSrc = Variables.varDDsR(flow, res);
-		DDdR resourceDest = Variables.varDDdR(flow, res);
-		inLinkConstraint.add(Variables.p(resourceSrc));
-		inLinkConstraint.add(-1, Variables.p(resourceUsed));
+		DDsR srcVariable = Variables.varDDsR(flow, res);
+		DDdR destVariable = Variables.varDDdR(flow, res);
+		// 1) an in-link is only active if either destination or at least one out-link
+		// DDLRR_in - DDdR - sum (DDLRR_out)   <= 0
 		for (DirectedLink inLink : inLinks) {
-			inLinkConstraint.add(Variables.p(Variables.varDDLRR(flow, inLink)));
+			result.add(createDirectedLinkConstraint(inLink, flow, destVariable, outLinks));
 		}
-		outLinkConstraint.add(Variables.p(resourceDest));
-		outLinkConstraint.add(-1, Variables.p(resourceUsed));
+		// 2) an out-link is only active it either source or at least one in-link
 		for (DirectedLink outLink : outLinks) {
-			outLinkConstraint.add(Variables.p(Variables.varDDLRR(flow, outLink)));
+			result.add(createDirectedLinkConstraint(outLink, flow, srcVariable, inLinks));
 		}
-		result.add(inLinkConstraint);
-		result.add(outLinkConstraint);
+		return result;
+	}
+	
+	/**
+	 * Formulates the constraint stating that the given link is only active if at least one of the enablers is active 
+	 * 
+	 * @param dirLink the given link
+	 * @param flow the routed communication flow
+	 * @param endPointEnabler the end point variable
+	 * @param linkEnablers the enabling links
+	 * @return the constraint stating that the given link is only active if at least one of the enablers is active
+	 */
+	public Constraint createDirectedLinkConstraint(DirectedLink dirLink, CommunicationFlow flow, Variable endPointEnabler, Set<DirectedLink> linkEnablers){
+		Constraint result = new Constraint(Operator.LE, 0);
+		result.add(Variables.p(Variables.varDDLRR(flow, dirLink)));
+		result.add(-1, Variables.p(endPointEnabler));
+		for (DirectedLink enablingLink : linkEnablers) {
+			if (!dirLink.getLink().getId().equals(enablingLink.getLink().getId())) {
+				result.add(-1, Variables.p(Variables.varDDLRR(flow, enablingLink)));
+			}
+		}
 		return result;
 	}
 
