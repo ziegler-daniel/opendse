@@ -78,8 +78,9 @@ public class StagnationRestart implements IndividualSetListener, OptimizerIterat
 			// the case where no individuals were found for the last diff
 			// generations
 			lastUpdate = iteration;
-			archive.clear();
+			//archive.clear();
 			population.clear();
+			population.addAll(archive);
 		}
 
 	}
