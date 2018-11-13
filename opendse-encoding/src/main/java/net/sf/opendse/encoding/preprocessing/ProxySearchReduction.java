@@ -42,7 +42,16 @@ public class ProxySearchReduction extends ProxySearch {
 				for (Link l : toRemove) {
 					routing.removeEdge(l);
 				}
+				// remove all resources that don't have any links left
+				Set<Resource> noLinksRes = new HashSet<Resource>();
+				for (Resource res : routing) {
+					if (routing.getIncidentEdges(res).isEmpty()) {
+						noLinksRes.add(res);
+					}
+				}
+				routing.removeVertices(noLinksRes);
 			}
 		}
+		
 	}
 }
