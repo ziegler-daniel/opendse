@@ -59,7 +59,6 @@ public class StagnationRestartTest {
 		population.add(indi1);
 		population.add(indi2);
 		StagnationRestart restart = new StagnationRestart(population, 20);
-		restart.archive.add(indi1);
 		restart.archive.add(indi2);
 		assertEquals(0, restart.lastUpdate);
 		restart.iterationComplete(5);
@@ -68,8 +67,10 @@ public class StagnationRestartTest {
 		assertFalse(restart.archive.isEmpty());
 		restart.iterationComplete(21);
 		assertEquals(21, restart.lastUpdate);
-		assertTrue(population.isEmpty());
-		assertTrue(restart.archive.isEmpty());
+		assertTrue(population.size() == 1);
+		assertTrue(population.contains(indi2));
+		assertTrue(restart.archive.size() == 1);
+		assertTrue(restart.archive.contains(indi2));
 	}
 
 }
