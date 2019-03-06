@@ -32,7 +32,7 @@ import net.sf.opendse.model.parameter.Parameter;
  * @author Martin Lukasiewycz
  * 
  */
-public class Specification implements IAttributes {
+public class Specification extends Element {
 
 	protected Architecture<?, ?> architecture = null;
 	protected Application<?, ?> application = null;
@@ -91,7 +91,7 @@ public class Specification implements IAttributes {
 	 */
 	public Specification(Application<?, ?> application, Architecture<?, ?> architecture, Mappings<?, ?> mappings,
 			Routings<?, ?, ?> routings) {
-		super();
+		super("specification");
 		this.architecture = architecture;
 		this.application = application;
 		this.mappings = mappings;

@@ -395,6 +395,7 @@ public class Models {
 		elements.addAll(architecture.getVertices());
 		elements.addAll(architecture.getEdges());
 		elements.addAll(mappings.getAll());
+		elements.add(specification);
 		return elements;
 	}
 

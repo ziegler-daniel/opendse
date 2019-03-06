@@ -91,6 +91,7 @@ public class InterpreterVariable extends InterpreterAbstract{
 				implementationApplication, implementationAllocation);
 		Specification impl = new Specification(implementationApplication, implementationAllocation, implementationMappings,
 				implementationRoutings);
+		impl.setParent(specification);
 		Map<String, Element> map = Models.getElementsMap(impl);
 
 		// set active parameters
