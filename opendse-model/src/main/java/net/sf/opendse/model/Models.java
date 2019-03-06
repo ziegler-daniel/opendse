@@ -374,6 +374,7 @@ public class Models {
 		for (Mapping<Task, Resource> mapping : mappings) {
 			elements.put(mapping.getId(), mapping);
 		}
+		elements.put(specification.getId(), specification);
 		return elements;
 	}
 
