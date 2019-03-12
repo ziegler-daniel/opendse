@@ -80,7 +80,7 @@ public class StagnationRestart implements IndividualSetListener, OptimizerIterat
 			lastUpdate = iteration;
 			//archive.clear();
 			population.clear();
-			population.addAll(archive);
+			//population.addAll(archive);
 		}
 
 	}
