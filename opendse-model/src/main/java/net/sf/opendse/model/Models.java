@@ -437,7 +437,7 @@ public class Models {
 	 * {@link #copy(Element)}, i.e., create new instances for all {@link Element}s.
 	 * 
 	 * @param specification
-	 * @return
+	 * @return a copy of the specification
 	 */
 	public static Specification copy(Specification specification) {
 		Architecture<Resource, Link> sArchitecture = specification.getArchitecture();
