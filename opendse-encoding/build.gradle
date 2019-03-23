@@ -1,7 +1,7 @@
 dependencies {	
 	compile project(':opendse-model')	
 	compile project(':opendse-optimization')	
-	compile 'com.github.felixreimann:opt4j:513d2c0122'
+	compile 'com.github.felixreimann:opt4j:v3.2'
 	
 	testCompile	group: 'junit',							name: 'junit',					version: '4.12'
 	testCompile 'com.github.FedorSmirnov89:constraintTester:v1.0.0'
