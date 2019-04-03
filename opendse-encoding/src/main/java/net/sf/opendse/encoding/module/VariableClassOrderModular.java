@@ -24,19 +24,19 @@ public class VariableClassOrderModular {
 	public VariableClassOrderModular(VariableClassOrder order) {
 		//order.add(T.class);
 		//order.add(DTT.class);
-//		order.add(R.class);
-//		order.add(L.class);
-//		order.add(M.class);
-//		order.add(CR.class);
-//		order.add(CLRR.class);
-//		order.add(EAVI.class);
-		
+		order.add(R.class);
+		order.add(L.class);
+		order.add(M.class);
+		order.add(CR.class);
+		order.add(CLRR.class);
 		order.add(EAVI.class);
 		
-		order.add(CR.class);
-		order.add(M.class);
-		order.add(L.class);
-		order.add(R.class);
-		order.add(CLRR.class);
+//		order.add(EAVI.class);
+//		
+//		order.add(CR.class);
+//		order.add(M.class);
+//		order.add(L.class);
+//		order.add(R.class);
+//		order.add(CLRR.class);
 	}
 }

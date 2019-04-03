@@ -48,7 +48,7 @@ public class OptimizationNewModule extends ProblemModule {
 	protected boolean stagnationRestartEnabled = true;
 
 	protected boolean useModularEncoding = false;
-	
+
 	protected boolean removeCyclesManually = false;
 
 	@Required(property = "stagnationRestartEnabled", elements = { "TRUE" })
@@ -147,9 +147,11 @@ public class OptimizationNewModule extends ProblemModule {
 			bind(Interpreter.class).to(InterpreterVariable.class);
 			bind(ImplementationEncoding.class).to(ImplementationEncodingModular.class);
 			bind(ImplementationEncodingModular.class).to(ImplementationEncodingModularDefault.class);
-			bind(VariableClassOrderModular.class).asEagerSingleton();
+			if (useVariableOrder) {
+				bind(VariableClassOrderModular.class).asEagerSingleton();
+			}
 		}
-		
+
 		if (removeCyclesManually) {
 			bind(CycleBreakEncoder.class).to(CycleBreakEncoderNone.class);
 			bind(SpecificationPostProcessorCycleRemover.class).asEagerSingleton();
