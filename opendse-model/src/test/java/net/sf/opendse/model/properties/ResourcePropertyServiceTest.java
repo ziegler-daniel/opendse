@@ -31,18 +31,33 @@ public class ResourcePropertyServiceTest {
 		assertTrue(ResourcePropertyService.getLowerResources(proxy).size() == 1);
 		assertTrue(ResourcePropertyService.getLowerResources(proxy).contains(res));
 	}
-	
+
 	@Test(expected = IllegalArgumentException.class)
 	public void testExceptionLower() {
 		Resource res = new Resource("res");
 		Resource res1 = new Resource("res1");
 		ResourcePropertyService.addLowerResource(res, res1);
 	}
-	
-	@Test(expected=IllegalArgumentException.class)
+
+	@Test(expected = IllegalArgumentException.class)
 	public void testException() {
 		Resource res = new Resource("res");
-		ResourcePropertyService.setProxyDistance(res,1);
+		ResourcePropertyService.setProxyDistance(res, 1);
 	}
 
+	@Test
+	public void testExpressAttribute() {
+		Resource res = new Resource("res");
+		assertFalse(ResourcePropertyService.isExpress(res));
+		ResourcePropertyService.makeExpress(res);
+		assertTrue(ResourcePropertyService.isExpress(res));
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void testExpressException() {
+		Resource res = new Resource("res");
+		Resource master = new Resource("master");
+		ResourcePropertyService.setProxyId(res, master);
+		ResourcePropertyService.makeExpress(res);
+	}
 }

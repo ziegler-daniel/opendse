@@ -17,7 +17,7 @@ public class ResourcePropertyService extends AbstractPropertyService {
 
 	public enum ResourceAttributes {
 		PROXY_RESOURCE("proxy resource id"), PROXY_DISTANCE("proxy distance"), LOWER_RESOURCES(
-				"lower proxied resources");
+				"lower proxied resources"), EXPRESS_NODE("express node");
 		protected String xmlName;
 
 		private ResourceAttributes(String xmlName) {
@@ -138,5 +138,36 @@ public class ResourcePropertyService extends AbstractPropertyService {
 		Set<Resource> lowerResources = getLowerResources(resource);
 		lowerResources.add(lowerResource);
 		resource.setAttribute(attrName, lowerResources);
+	}
+
+	/**
+	 * Annotates the given resource as an express resource.
+	 * 
+	 * @param res
+	 *            the given resource
+	 */
+	public static void makeExpress(Resource res) {
+		if (hasProxy(res)) {
+			throw new IllegalArgumentException("only masters can be express nodes - " + res.toString() + " is a slave");
+		}
+		String attrName = ResourceAttributes.EXPRESS_NODE.xmlName;
+		res.setAttribute(attrName, true);
+	}
+
+	/**
+	 * Returns {@code true} iff the given resource is annotated as an express
+	 * resource.
+	 * 
+	 * @param res
+	 *            the given resource
+	 * @return {@code true} iff the given resource is annotated as an express
+	 *         resource
+	 */
+	public static boolean isExpress(Resource res) {
+		String attrName = ResourceAttributes.EXPRESS_NODE.xmlName;
+		if (!isAttributeSet(res, attrName)) {
+			return false;
+		}
+		return (Boolean) getAttribute(res, attrName);
 	}
 }
