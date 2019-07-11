@@ -51,7 +51,7 @@ public class ResourcePropertyService extends AbstractPropertyService {
 	 * @param resource
 	 *            the given resource
 	 * @param proxy
-	 *            the proxy of the given resource
+	 *            the proxy master of the given resource
 	 */
 	public static void setProxyId(Resource resource, Resource proxy) {
 		resource.setAttribute(ResourceAttributes.PROXY_RESOURCE.xmlName, proxy.getId());

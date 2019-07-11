@@ -14,6 +14,7 @@ import net.sf.opendse.model.Architecture;
 import net.sf.opendse.model.Link;
 import net.sf.opendse.model.Models;
 import net.sf.opendse.model.Resource;
+import net.sf.opendse.model.properties.ResourcePropertyService;
 import net.sf.opendse.model.Models.DirectedLink;
 
 public class RoutingEdgeEncoderRedundant implements RoutingEdgeEncoder {
@@ -22,11 +23,13 @@ public class RoutingEdgeEncoderRedundant implements RoutingEdgeEncoder {
 	public Set<Constraint> toConstraints(CommunicationFlow communicationFlow, Architecture<Resource, Link> routing) {
 		Set<Constraint> result = new HashSet<Constraint>();
 		for (Resource res : routing) {
-			result.addAll(generateSrcConstraints(communicationFlow, res, routing));
-			result.addAll(generateDestConstraints(communicationFlow, res, routing));
-			result.addAll(generateLinkBalanceConstraints(communicationFlow, res, routing));
+			// ignoring express resources
+			if (!ResourcePropertyService.isExpress(res)) {
+				result.addAll(generateSrcConstraints(communicationFlow, res, routing));
+				result.addAll(generateDestConstraints(communicationFlow, res, routing));
+				result.addAll(generateLinkBalanceConstraints(communicationFlow, res, routing));
+			}
 		}
-
 		return result;
 	}
 
@@ -54,7 +57,7 @@ public class RoutingEdgeEncoderRedundant implements RoutingEdgeEncoder {
 		DDsR srcVariable = Variables.varDDsR(flow, res);
 		DDdR destVariable = Variables.varDDdR(flow, res);
 		// 1) an in-link is only active if either destination or at least one out-link
-		// DDLRR_in - DDdR - sum (DDLRR_out)   <= 0
+		// DDLRR_in - DDdR - sum (DDLRR_out) <= 0
 		for (DirectedLink inLink : inLinks) {
 			result.add(createDirectedLinkConstraint(inLink, flow, destVariable, outLinks));
 		}
@@ -64,17 +67,24 @@ public class RoutingEdgeEncoderRedundant implements RoutingEdgeEncoder {
 		}
 		return result;
 	}
-	
+
 	/**
-	 * Formulates the constraint stating that the given link is only active if at least one of the enablers is active 
+	 * Formulates the constraint stating that the given link is only active if at
+	 * least one of the enablers is active
 	 * 
-	 * @param dirLink the given link
-	 * @param flow the routed communication flow
-	 * @param endPointEnabler the end point variable
-	 * @param linkEnablers the enabling links
-	 * @return the constraint stating that the given link is only active if at least one of the enablers is active
+	 * @param dirLink
+	 *            the given link
+	 * @param flow
+	 *            the routed communication flow
+	 * @param endPointEnabler
+	 *            the end point variable
+	 * @param linkEnablers
+	 *            the enabling links
+	 * @return the constraint stating that the given link is only active if at least
+	 *         one of the enablers is active
 	 */
-	public Constraint createDirectedLinkConstraint(DirectedLink dirLink, CommunicationFlow flow, Variable endPointEnabler, Set<DirectedLink> linkEnablers){
+	public Constraint createDirectedLinkConstraint(DirectedLink dirLink, CommunicationFlow flow,
+			Variable endPointEnabler, Set<DirectedLink> linkEnablers) {
 		Constraint result = new Constraint(Operator.LE, 0);
 		result.add(Variables.p(Variables.varDDLRR(flow, dirLink)));
 		result.add(-1, Variables.p(endPointEnabler));
@@ -105,8 +115,8 @@ public class RoutingEdgeEncoderRedundant implements RoutingEdgeEncoder {
 	}
 
 	/**
-	 * Generates the constraints stating that the source of the communication flow (which is not a destination)
-	 * has a) at least one out-edge
+	 * Generates the constraints stating that the source of the communication flow
+	 * (which is not a destination) has a) at least one out-edge
 	 * 
 	 * sum(outLink) + dest - src >= 0 each inLink <= src
 	 * 
@@ -127,8 +137,9 @@ public class RoutingEdgeEncoderRedundant implements RoutingEdgeEncoder {
 	protected Set<Constraint> generateEndPointConstraints(CommunicationFlow flow, Resource res,
 			Architecture<Resource, Link> routing, boolean source) {
 		Set<Constraint> result = new HashSet<Constraint>();
-//		Set<DirectedLink> inLinks = source ? new HashSet<Models.DirectedLink>(Models.getInLinks(routing, res))
-//				: new HashSet<Models.DirectedLink>(Models.getOutLinks(routing, res));
+		// Set<DirectedLink> inLinks = source ? new
+		// HashSet<Models.DirectedLink>(Models.getInLinks(routing, res))
+		// : new HashSet<Models.DirectedLink>(Models.getOutLinks(routing, res));
 		Set<DirectedLink> outLinks = source ? new HashSet<Models.DirectedLink>(Models.getOutLinks(routing, res))
 				: new HashSet<Models.DirectedLink>(Models.getInLinks(routing, res));
 		Constraint outLinkConstraint = new Constraint(Operator.GE, 0);
@@ -140,12 +151,12 @@ public class RoutingEdgeEncoderRedundant implements RoutingEdgeEncoder {
 			outLinkConstraint.add(Variables.p(Variables.varDDLRR(flow, outLink)));
 		}
 		result.add(outLinkConstraint);
-//		for (DirectedLink inLink : inLinks) {
-//			Constraint inLinkConstraint = new Constraint(Operator.LE, 0);
-//			inLinkConstraint.add(Variables.p(Variables.varDDLRR(flow, inLink)));
-//			inLinkConstraint.add(-1, Variables.n(resourceSource));
-//			result.add(inLinkConstraint);
-//		}
+		// for (DirectedLink inLink : inLinks) {
+		// Constraint inLinkConstraint = new Constraint(Operator.LE, 0);
+		// inLinkConstraint.add(Variables.p(Variables.varDDLRR(flow, inLink)));
+		// inLinkConstraint.add(-1, Variables.n(resourceSource));
+		// result.add(inLinkConstraint);
+		// }
 		return result;
 	}
 }

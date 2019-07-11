@@ -50,9 +50,12 @@ public class RoutingEdgeEncoderNonRedundant implements RoutingEdgeEncoder {
 			}
 			inLinks.removeAll(toRemove);
 			outLinks.removeAll(toRemove);
-			routingEdgeConstraints.add(makeOutLinkConstraint(communicationFlow, resource, outLinks));
-			routingEdgeConstraints.add(makeInLinkConstraint(communicationFlow, resource, inLinks));
-			routingEdgeConstraints.add(makeLinkBalanceConstraint(communicationFlow, resource, inLinks, outLinks));
+			if (!ResourcePropertyService.isExpress(resource)) {
+				// express resources can be ignored here
+				routingEdgeConstraints.add(makeOutLinkConstraint(communicationFlow, resource, outLinks));
+				routingEdgeConstraints.add(makeInLinkConstraint(communicationFlow, resource, inLinks));
+				routingEdgeConstraints.add(makeLinkBalanceConstraint(communicationFlow, resource, inLinks, outLinks));
+			}
 		}
 		return routingEdgeConstraints;
 	}
