@@ -24,7 +24,7 @@ public class RoutingEdgeEncoderRedundant implements RoutingEdgeEncoder {
 		Set<Constraint> result = new HashSet<Constraint>();
 		for (Resource res : routing) {
 			// ignoring express resources
-			if (!ResourcePropertyService.isExpress(res)) {
+			if (!ResourcePropertyService.isExpress(res) && !ResourcePropertyService.hasProxy(res)) {
 				result.addAll(generateSrcConstraints(communicationFlow, res, routing));
 				result.addAll(generateDestConstraints(communicationFlow, res, routing));
 				result.addAll(generateLinkBalanceConstraints(communicationFlow, res, routing));

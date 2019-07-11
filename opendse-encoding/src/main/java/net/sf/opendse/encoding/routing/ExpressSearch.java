@@ -36,27 +36,22 @@ public class ExpressSearch {
 			ArchitectureElementPropertyService.setOfferRoutingVariety(l, false);
 		}
 	}
-	
+
 	/**
 	 * Annotates the nodes that form the entrances to the express areas.
 	 * 
-	 * @param arch the architecture graph
-	 * @param expressLinks the express links
+	 * @param arch
+	 *            the architecture graph
+	 * @param expressLinks
+	 *            the express links
 	 */
 	protected void annotateExpressNodes(Architecture<Resource, Link> arch, Set<Link> expressLinks) {
 		Set<Resource> expressNodes = new HashSet<Resource>();
 		for (Resource res : arch) {
-			boolean expressLink = false;
-			boolean nonExpressLink = false;
 			for (Link l : arch.getIncidentEdges(res)) {
 				if (expressLinks.contains(l)) {
-					expressLink = true;
-				}else {
-					nonExpressLink = true;
+					expressNodes.add(res);
 				}
-			}
-			if (expressLink && nonExpressLink) {
-				expressNodes.add(res);
 			}
 		}
 		for (Resource res : expressNodes) {

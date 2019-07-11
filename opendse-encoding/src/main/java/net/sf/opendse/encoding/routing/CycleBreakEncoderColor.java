@@ -42,27 +42,28 @@ public class CycleBreakEncoderColor implements CycleBreakEncoder {
 
 	/**
 	 * Formulates {@link Constraint}s that result in a 2-coloring of the routing
-	 * graph. A link may only be used for the routing of the communication if
-	 * its tow end points have a different color. By this, all cycles with an
-	 * odd number of nodes are prevented.
+	 * graph. A link may only be used for the routing of the communication if its
+	 * tow end points have a different color. By this, all cycles with an odd number
+	 * of nodes are prevented.
 	 * 
 	 * @param commVar
 	 *            the {@link T} {@link Variable} encoding the activation of the
 	 *            communication that is being routed
 	 * @param routing
-	 *            the {@link Architecture} graph representing all possible
-	 *            routings for the communication that is being routed
-	 * @return {@link Constraint}s that result in a 2-coloring of the routing
-	 *         graph. A link may only be used for the routing of the
-	 *         communication if its two end points have a different color. By
-	 *         this, all cycles with an odd number of nodes are prevented.
+	 *            the {@link Architecture} graph representing all possible routings
+	 *            for the communication that is being routed
+	 * @return {@link Constraint}s that result in a 2-coloring of the routing graph.
+	 *         A link may only be used for the routing of the communication if its
+	 *         two end points have a different color. By this, all cycles with an
+	 *         odd number of nodes are prevented.
 	 */
 	protected Set<Constraint> performTwoColoring(T commVar, Architecture<Resource, Link> routing) {
 		Set<Constraint> result = new HashSet<Constraint>();
 		Task comm = commVar.getTask();
 		// iterates all pairs of directed links
 		for (Resource first : routing) {
-			if (!ResourcePropertyService.getProxyId(first).equals(first.getId())) {
+			if (!ResourcePropertyService.getProxyId(first).equals(first.getId())
+					|| ResourcePropertyService.isExpress(first)) {
 				// proxy resource
 				continue;
 			}
@@ -72,38 +73,44 @@ public class CycleBreakEncoderColor implements CycleBreakEncoder {
 						continue;
 					}
 					Resource second = routing.getOpposite(first, firstLink);
+					if (ResourcePropertyService.isExpress(second)) {
+						continue;
+					}
 					Resource third = routing.getOpposite(first, secondLink);
-					
+					if (ResourcePropertyService.isExpress(third)) {
+						continue;
+					}
+
 					CLRR inLink1 = Variables.varCLRR(comm, new DirectedLink(firstLink, second, first));
 					CLRR outLink1 = Variables.varCLRR(comm, new DirectedLink(secondLink, first, third));
-					
+
 					CLRR outLink2 = Variables.varCLRR(comm, new DirectedLink(firstLink, first, second));
 					CLRR inLink2 = Variables.varCLRR(comm, new DirectedLink(secondLink, third, first));
-					
+
 					ColoredCommNode secondBlack = Variables.varColoredCommNode(comm, second, black);
 					ColoredCommNode thirdBlack = Variables.varColoredCommNode(comm, third, black);
-					
+
 					Constraint differentNeighborColor1a = new Constraint(Operator.LE, 3);
 					differentNeighborColor1a.add(Variables.p(inLink1));
 					differentNeighborColor1a.add(Variables.p(outLink1));
 					differentNeighborColor1a.add(Variables.p(secondBlack));
 					differentNeighborColor1a.add(Variables.p(thirdBlack));
 					result.add(differentNeighborColor1a);
-					
+
 					Constraint differentNeighborColor1b = new Constraint(Operator.LE, 1);
 					differentNeighborColor1b.add(Variables.p(inLink1));
 					differentNeighborColor1b.add(Variables.p(outLink1));
 					differentNeighborColor1b.add(-1, Variables.p(secondBlack));
 					differentNeighborColor1b.add(-1, Variables.p(thirdBlack));
 					result.add(differentNeighborColor1b);
-					
+
 					Constraint differentNeighborColor2a = new Constraint(Operator.LE, 3);
 					differentNeighborColor2a.add(Variables.p(inLink2));
 					differentNeighborColor2a.add(Variables.p(outLink2));
 					differentNeighborColor2a.add(Variables.p(secondBlack));
 					differentNeighborColor2a.add(Variables.p(thirdBlack));
 					result.add(differentNeighborColor2a);
-					
+
 					Constraint differentNeighborColor2b = new Constraint(Operator.LE, 1);
 					differentNeighborColor2b.add(Variables.p(inLink2));
 					differentNeighborColor2b.add(Variables.p(outLink2));
@@ -113,33 +120,36 @@ public class CycleBreakEncoderColor implements CycleBreakEncoder {
 				}
 			}
 		}
-		
+
 		return result;
 	}
-	
+
 	/**
 	 * 
 	 * Formulates {@link Constraint}s that result in a 3-coloring of the routing
-	 * graph. Each resource node that is used for the routing of the message
-	 * must not share the color with its pre- or its successor. By this, all
-	 * cycles with an even number of nodes are prevented.
+	 * graph. Each resource node that is used for the routing of the message must
+	 * not share the color with its pre- or its successor. By this, all cycles with
+	 * an even number of nodes are prevented.
 	 * 
 	 * @param commVar
 	 *            the {@link T} {@link Variable} encoding the activation of the
 	 *            communication that is being routed
 	 * @param routing
-	 *            the {@link Architecture} graph representing all possible
-	 *            routings for the communication that is being routed
-	 * @return {@link Constraint}s that result in a 3-coloring of the routing
-	 *         graph. Each resource node that is used for the routing of the
-	 *         message must not share the color with its pre- or its successor.
-	 *         By this, all cycles with an even number of nodes are prevented.
+	 *            the {@link Architecture} graph representing all possible routings
+	 *            for the communication that is being routed
+	 * @return {@link Constraint}s that result in a 3-coloring of the routing graph.
+	 *         Each resource node that is used for the routing of the message must
+	 *         not share the color with its pre- or its successor. By this, all
+	 *         cycles with an even number of nodes are prevented.
 	 */
 	protected Set<Constraint> performThreeColoring(T commVar, Architecture<Resource, Link> routing) {
 		Task comm = commVar.getTask();
 		Set<Constraint> result = new HashSet<Constraint>();
 		// iterates each resource and processes each in- and out-link pair
 		for (Resource res : routing) {
+			if (ResourcePropertyService.isExpress(res)) {
+				continue;
+			}
 			result.add(paintResource3Colors(comm, res));
 			Set<DirectedLink> inLinks = new HashSet<Models.DirectedLink>(Models.getInLinks(routing, res));
 			Set<DirectedLink> outLinks = new HashSet<Models.DirectedLink>(Models.getOutLinks(routing, res));
@@ -147,12 +157,18 @@ public class CycleBreakEncoderColor implements CycleBreakEncoder {
 			// predecessor
 			for (DirectedLink inLink : inLinks) {
 				Resource predecessor = inLink.getSource();
+				if (ResourcePropertyService.isExpress(predecessor)) {
+					continue;
+				}
 				result.addAll(paintNeighborsDifferently(comm, inLink, res, predecessor));
 			}
 			// states that the resource has to have a different color than its
 			// predecessor
 			for (DirectedLink outLink : outLinks) {
 				Resource successor = outLink.getDest();
+				if (ResourcePropertyService.isExpress(successor)) {
+					continue;
+				}
 				result.addAll(paintNeighborsDifferently(comm, outLink, res, successor));
 			}
 			// states that the predecessor has to be painted differently that
@@ -161,7 +177,8 @@ public class CycleBreakEncoderColor implements CycleBreakEncoder {
 				for (DirectedLink outLink : outLinks) {
 					Resource predecessor = inLink.getSource();
 					Resource successor = outLink.getDest();
-					if (predecessor.equals(successor))
+					if (predecessor.equals(successor) || ResourcePropertyService.isExpress(successor)
+							|| ResourcePropertyService.isExpress(predecessor))
 						continue;
 					result.addAll(paintNeighborhoodDifferently(comm, inLink, outLink, predecessor, successor));
 				}
@@ -171,11 +188,10 @@ public class CycleBreakEncoderColor implements CycleBreakEncoder {
 	}
 
 	/**
-	 * Formulates the {@link Constraint}s stating that a pair consisting of an
-	 * in- and an out-link of the same resource may only be activated for the
-	 * routing of a communication {@link Task} if the predecessor and the
-	 * successor of the resource are colored differently (out of 3 possible
-	 * colors).
+	 * Formulates the {@link Constraint}s stating that a pair consisting of an in-
+	 * and an out-link of the same resource may only be activated for the routing of
+	 * a communication {@link Task} if the predecessor and the successor of the
+	 * resource are colored differently (out of 3 possible colors).
 	 * 
 	 * @param comm
 	 *            the communication that is being routed
@@ -187,11 +203,11 @@ public class CycleBreakEncoderColor implements CycleBreakEncoder {
 	 *            the predecessor of the resource
 	 * @param successor
 	 *            the successor of the resource
-	 * @return the {@link Constraint}s stating that a pair consisting of an in-
-	 *         and an out-link of the same resource may only be activated for
-	 *         the routing of a communication {@link Task} if the predecessor
-	 *         and the successor of the resource are colored differently (out of
-	 *         3 possible colors)
+	 * @return the {@link Constraint}s stating that a pair consisting of an in- and
+	 *         an out-link of the same resource may only be activated for the
+	 *         routing of a communication {@link Task} if the predecessor and the
+	 *         successor of the resource are colored differently (out of 3 possible
+	 *         colors)
 	 */
 	protected Set<Constraint> paintNeighborhoodDifferently(Task comm, DirectedLink inLink, DirectedLink outLink,
 			Resource predecessor, Resource successor) {
@@ -226,9 +242,9 @@ public class CycleBreakEncoderColor implements CycleBreakEncoder {
 	}
 
 	/**
-	 * Formulates the {@link Constraint}s stating that a {@link Link} may only
-	 * be used for the routing of a communication {@link Task} if its two end
-	 * points have a different color (out of 3 possible colors).
+	 * Formulates the {@link Constraint}s stating that a {@link Link} may only be
+	 * used for the routing of a communication {@link Task} if its two end points
+	 * have a different color (out of 3 possible colors).
 	 * 
 	 * @param comm
 	 *            the communication that is being routed
@@ -238,9 +254,9 @@ public class CycleBreakEncoderColor implements CycleBreakEncoder {
 	 *            one of the end points of the link
 	 * @param second
 	 *            the other end point of the link
-	 * @return the {@link Constraint}s stating that a {@link Link} may only be
-	 *         used for the routing of a communication {@link Task} if its two
-	 *         end points have a different color (out of 3 possible colors)
+	 * @return the {@link Constraint}s stating that a {@link Link} may only be used
+	 *         for the routing of a communication {@link Task} if its two end points
+	 *         have a different color (out of 3 possible colors)
 	 */
 	protected Set<Constraint> paintNeighborsDifferently(Task comm, DirectedLink dLink, Resource first,
 			Resource second) {
@@ -271,17 +287,17 @@ public class CycleBreakEncoderColor implements CycleBreakEncoder {
 	}
 
 	/**
-	 * Formulates the {@link Constraint} stating that the given {@link Resource}
-	 * has exactly one of three colors in the routing of the given communication
+	 * Formulates the {@link Constraint} stating that the given {@link Resource} has
+	 * exactly one of three colors in the routing of the given communication
 	 * {@link Task}.
 	 * 
 	 * @param comm
 	 *            the communication that is being routed
 	 * @param res
 	 *            the resource that is being painted
-	 * @return the {@link Constraint} stating that the given {@link Resource}
-	 *         has exactly one of three colors in the routing of the given
-	 *         communication {@link Task}
+	 * @return the {@link Constraint} stating that the given {@link Resource} has
+	 *         exactly one of three colors in the routing of the given communication
+	 *         {@link Task}
 	 */
 	protected Constraint paintResource3Colors(Task comm, Resource res) {
 		ColoredCommNode resourceRed = Variables.varColoredCommNode(comm, res, red);
