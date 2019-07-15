@@ -28,6 +28,16 @@ public class ProxyRoutingModule extends Opt4JModule {
 	@Name("activate the elements in the proxy areas")
 	protected boolean activateProxyAreas = true;
 
+	protected boolean exploitExpressAreas = true;
+
+	public boolean isExploitExpressAreas() {
+		return exploitExpressAreas;
+	}
+
+	public void setExploitExpressAreas(boolean exploitExpressAreas) {
+		this.exploitExpressAreas = exploitExpressAreas;
+	}
+
 	public boolean isActivateProxyAreas() {
 		return activateProxyAreas;
 	}
@@ -44,6 +54,8 @@ public class ProxyRoutingModule extends Opt4JModule {
 			bind(SpecificationPostProcessorProxy.class).asEagerSingleton();
 		} else {
 			bind(ProxySearch.class).asEagerSingleton();
+		}
+		if (exploitExpressAreas) {
 			bind(ExpressSearch.class).asEagerSingleton();
 		}
 	}

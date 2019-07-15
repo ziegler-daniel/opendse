@@ -4,20 +4,23 @@ import static org.junit.Assert.*;
 
 import org.junit.Test;
 
+import net.sf.opendse.encoding.preprocessing.SpecificationPreprocessorMulti;
 import net.sf.opendse.model.Architecture;
 import net.sf.opendse.model.Link;
 import net.sf.opendse.model.Resource;
 import net.sf.opendse.model.properties.ArchitectureElementPropertyService;
 import net.sf.opendse.model.properties.ResourcePropertyService;
 
+import static org.mockito.Mockito.mock;
+
 public class ExpressSearchTest {
 
 	@Test
 	public void test() {
 		Architecture<Resource, Link> arch = ExpressSearchTestRes.getArch();
-		ExpressSearch expressSearch = new ExpressSearch();
+		ExpressSearch expressSearch = new ExpressSearch(mock(SpecificationPreprocessorMulti.class));
 		expressSearch.searchForExpressAreas(arch);
-		
+
 		assertFalse(ResourcePropertyService.isExpress(arch.getVertex("res0")));
 		assertFalse(ResourcePropertyService.isExpress(arch.getVertex("res1")));
 		assertFalse(ResourcePropertyService.isExpress(arch.getVertex("res2")));
@@ -31,7 +34,7 @@ public class ExpressSearchTest {
 		assertFalse(ResourcePropertyService.isExpress(arch.getVertex("res10")));
 		assertFalse(ResourcePropertyService.isExpress(arch.getVertex("res11")));
 		assertFalse(ResourcePropertyService.isExpress(arch.getVertex("res12")));
-		
+
 		assertFalse(ArchitectureElementPropertyService.getOffersRoutingVariety(arch.getEdge("l0")));
 		assertFalse(ArchitectureElementPropertyService.getOffersRoutingVariety(arch.getEdge("l1")));
 		assertTrue(ArchitectureElementPropertyService.getOffersRoutingVariety(arch.getEdge("l2")));
