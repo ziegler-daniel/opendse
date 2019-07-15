@@ -3,9 +3,14 @@ package net.sf.opendse.encoding.routing;
 import java.util.HashSet;
 import java.util.Set;
 
+import com.google.inject.Inject;
+
+import net.sf.opendse.encoding.preprocessing.SpecificationPreprocessorComposable;
+import net.sf.opendse.encoding.preprocessing.SpecificationPreprocessorMulti;
 import net.sf.opendse.model.Architecture;
 import net.sf.opendse.model.Link;
 import net.sf.opendse.model.Resource;
+import net.sf.opendse.model.Specification;
 import net.sf.opendse.model.properties.ArchitectureElementPropertyService;
 import net.sf.opendse.model.properties.ResourcePropertyService;
 
@@ -17,8 +22,13 @@ import net.sf.opendse.model.properties.ResourcePropertyService;
  * @author Fedor Smirnov
  *
  */
-public class ExpressSearch {
+public class ExpressSearch extends SpecificationPreprocessorComposable{
 
+	@Inject
+	public ExpressSearch(SpecificationPreprocessorMulti multiPreprocessor) {
+		multiPreprocessor.addPreprocessor(this);
+	}
+	
 	/**
 	 * Searches for the express resources in the architecture, marks them, and
 	 * annotates that the links within the express area do not offer routing
@@ -141,5 +151,10 @@ public class ExpressSearch {
 			reachable.addAll(foundNow);
 		} while (!foundNow.isEmpty());
 		return reachable;
+	}
+
+	@Override
+	public void preprocessSpecification(Specification userSpecification) {
+		searchForExpressAreas(userSpecification.getArchitecture());
 	}
 }

@@ -9,6 +9,7 @@ import org.opt4j.core.start.Opt4JModule;
 import net.sf.opendse.encoding.interpreter.SpecificationPostProcessorProxy;
 import net.sf.opendse.encoding.preprocessing.ProxySearch;
 import net.sf.opendse.encoding.preprocessing.ProxySearchReduction;
+import net.sf.opendse.encoding.routing.ExpressSearch;
 import net.sf.opendse.encoding.routing.ProxyEncoder;
 import net.sf.opendse.encoding.routing.ProxyEncoderLazy;
 import net.sf.opendse.optimization.DesignSpaceExplorationModule;
@@ -43,6 +44,7 @@ public class ProxyRoutingModule extends Opt4JModule {
 			bind(SpecificationPostProcessorProxy.class).asEagerSingleton();
 		} else {
 			bind(ProxySearch.class).asEagerSingleton();
+			bind(ExpressSearch.class).asEagerSingleton();
 		}
 	}
 }
