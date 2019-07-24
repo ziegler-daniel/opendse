@@ -59,20 +59,25 @@ public class SATConstraints {
 	protected final boolean usePreprocessing;
 	protected boolean isInit = false;
 	protected ImplementationEncoding encoding;
+	protected final boolean filterRoutings;
 
 	@Inject
-	public SATConstraints(SpecificationWrapper specificationWrapper, ImplementationEncoding encoding, @Constant(value = "preprocessing", namespace = SATConstraints.class) boolean usePreprocessing) {
-		this(specificationWrapper, encoding, new ConstraintPreprocessing(true, true,
-				new Encoding.VariableComparator(), null, true), usePreprocessing);
-		
+	public SATConstraints(SpecificationWrapper specificationWrapper, ImplementationEncoding encoding,
+			@Constant(value = "preprocessing", namespace = SATConstraints.class) boolean usePreprocessing,
+			@Constant(value = "filterRoutings", namespace = SATConstraints.class) boolean filterRoutings) {
+		this(specificationWrapper, encoding,
+				new ConstraintPreprocessing(true, true, new Encoding.VariableComparator(), null, true),
+				usePreprocessing, filterRoutings);
 	}
 
-	public SATConstraints(SpecificationWrapper specificationWrapper, ImplementationEncoding encoding, ConstraintPreprocessing pp, boolean usePreprocessing) {
+	public SATConstraints(SpecificationWrapper specificationWrapper, ImplementationEncoding encoding,
+			ConstraintPreprocessing pp, boolean usePreprocessing, boolean filterRoutings) {
 		super();
 		this.specificationWrapper = specificationWrapper;
 		this.encoding = encoding;
 		this.pp = pp;
 		this.usePreprocessing = usePreprocessing;
+		this.filterRoutings = filterRoutings;
 	}
 
 	public synchronized List<Constraint> getConstraints() {
@@ -93,7 +98,9 @@ public class SATConstraints {
 		if (!isInit) {
 			// TODO rewrite this
 			Specification specification = specificationWrapper.getSpecification();
-			RoutingFilter.filter(specification);
+			if (filterRoutings) {
+				RoutingFilter.filter(specification);
+			}
 
 			Collection<Constraint> constraints = encoding.toConstraints();
 
@@ -105,12 +112,11 @@ public class SATConstraints {
 				constraints.add(constraint);
 			}
 			/*
-			 * for (Constraint constraint : constraints) {
-			 * System.out.println(constraint); }
+			 * for (Constraint constraint : constraints) { System.out.println(constraint); }
 			 */
 			// this.constraints.addAll(constraints);
-			
-			if(usePreprocessing){
+
+			if (usePreprocessing) {
 				this.constraints.addAll(pp.process(constraints));
 			} else {
 				this.constraints.addAll(constraints);
@@ -132,12 +138,12 @@ public class SATConstraints {
 		if (!isInit) {
 			init();
 		}
-		
-		if(usePreprocessing){
+
+		if (usePreprocessing) {
 			return pp.decorate(model);
 		} else {
 			return model;
-		}		
+		}
 	}
 
 	public ConstraintPreprocessing getPreprocessing() {

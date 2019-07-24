@@ -45,6 +45,9 @@ public class OptimizationNewModule extends ProblemModule {
 	@Constant(value = "preprocessing", namespace = SATConstraints.class)
 	protected boolean usePreprocessing = true;
 
+	@Constant(value = "filterRoutings", namespace = SATConstraints.class)
+	protected boolean filterRoutings = true;
+
 	protected boolean stagnationRestartEnabled = true;
 
 	protected boolean useModularEncoding = false;
@@ -60,6 +63,14 @@ public class OptimizationNewModule extends ProblemModule {
 
 	public boolean isRemoveCyclesManually() {
 		return removeCyclesManually;
+	}
+
+	public boolean isFilterRoutings() {
+		return filterRoutings;
+	}
+
+	public void setFilterRoutings(boolean filterRoutings) {
+		this.filterRoutings = filterRoutings;
 	}
 
 	public void setRemoveCyclesManually(boolean removeCyclesManually) {
