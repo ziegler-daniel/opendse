@@ -2,6 +2,8 @@ package net.sf.opendse.encoding.interpreter;
 
 import java.util.Set;
 
+import com.google.inject.Inject;
+
 import net.sf.opendse.encoding.preprocessing.ExpressRoutings;
 import net.sf.opendse.encoding.preprocessing.ExpressRoutingsShortestPath;
 import net.sf.opendse.model.Application;
@@ -28,6 +30,7 @@ public class SpecificationPostProcessorExpress extends SpecificationPostProcesso
 
 	protected ExpressRoutings expressRoutings;
 
+	@Inject
 	public SpecificationPostProcessorExpress(SpecificationWrapper specWrapper,
 			SpecificationPostProcessorMulti postProcessorMulti) {
 		super(specWrapper, postProcessorMulti);
