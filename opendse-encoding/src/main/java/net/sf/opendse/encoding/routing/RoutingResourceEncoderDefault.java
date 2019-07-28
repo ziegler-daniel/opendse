@@ -16,6 +16,7 @@ import net.sf.opendse.model.Link;
 import net.sf.opendse.model.Models;
 import net.sf.opendse.model.Resource;
 import net.sf.opendse.model.Task;
+import net.sf.opendse.model.properties.ArchitectureElementPropertyService;
 import net.sf.opendse.model.Models.DirectedLink;
 
 public class RoutingResourceEncoderDefault implements RoutingResourceEncoder {
@@ -87,6 +88,13 @@ public class RoutingResourceEncoderDefault implements RoutingResourceEncoder {
 		Set<Variable> result = new HashSet<Variable>();
 		Set<DirectedLink> nodeLinks = new HashSet<Models.DirectedLink>(Models.getInLinks(routing, resource));
 		nodeLinks.addAll(Models.getOutLinks(routing, resource));
+		Set<DirectedLink> toRemove = new HashSet<Models.DirectedLink>();
+		for (DirectedLink dLink : nodeLinks) {
+			if (!ArchitectureElementPropertyService.getOffersRoutingVariety(dLink.getLink())) {
+				toRemove.add(dLink);
+			}
+		}
+		nodeLinks.removeAll(toRemove);
 		for (DirectedLink directedLink : nodeLinks) {
 			result.add(Variables.varDDLRR(communicationFlow, directedLink));
 		}
