@@ -1,9 +1,10 @@
-package net.sf.opendse.encoding.routing;
+package net.sf.opendse.encoding.preprocessing;
 
 import static org.junit.Assert.*;
 
 import org.junit.Test;
 
+import net.sf.opendse.encoding.preprocessing.ExpressSearch;
 import net.sf.opendse.encoding.preprocessing.SpecificationPreprocessorMulti;
 import net.sf.opendse.model.Architecture;
 import net.sf.opendse.model.Link;
@@ -49,5 +50,9 @@ public class ExpressSearchTest {
 		assertTrue(ArchitectureElementPropertyService.getOffersRoutingVariety(arch.getEdge("l11")));
 		assertFalse(ArchitectureElementPropertyService.getOffersRoutingVariety(arch.getEdge("l12")));
 		assertFalse(ArchitectureElementPropertyService.getOffersRoutingVariety(arch.getEdge("l13")));
+
+		assertEquals(0, ResourcePropertyService.getExpressAreaId(arch.getVertex("res7")));
+		assertEquals(0, ResourcePropertyService.getExpressAreaId(arch.getVertex("res6")));
+		assertEquals(0, ResourcePropertyService.getExpressAreaId(arch.getVertex("res5")));
 	}
 }

@@ -60,4 +60,25 @@ public class ResourcePropertyServiceTest {
 		ResourcePropertyService.setProxyId(res, master);
 		ResourcePropertyService.makeExpress(res);
 	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void testExpressAreaException1() {
+		Resource res = new Resource("res");
+		ResourcePropertyService.setExpressAreaId(res, 1);
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void testExpressAreaException2() {
+		Resource res = new Resource("res");
+		ResourcePropertyService.getExpressAreaId(res);
+	}
+
+	@Test
+	public void testExpressArea() {
+		Resource res = new Resource("res");
+		ResourcePropertyService.makeExpress(res);
+		assertEquals(-1, ResourcePropertyService.getExpressAreaId(res));
+		ResourcePropertyService.setExpressAreaId(res, 1);
+		assertEquals(1, ResourcePropertyService.getExpressAreaId(res));
+	}
 }

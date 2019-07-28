@@ -1,4 +1,4 @@
-package net.sf.opendse.encoding.routing;
+package net.sf.opendse.encoding.preprocessing;
 
 import edu.uci.ics.jung.graph.util.EdgeType;
 import net.sf.opendse.model.Application;

@@ -21,10 +21,18 @@ import net.sf.opendse.model.properties.TaskPropertyService;
  */
 public class ProxySearchReduction extends ProxySearch {
 
+	public static final int PRIORITY = 1;
+	
+	@Override
+	public int getPriority() {
+		return PRIORITY;
+	}
+	
 	@Inject
 	public ProxySearchReduction(SpecificationPreprocessorMulti multiPreprocessor) {
 		super(multiPreprocessor);
 	}
+	
 	
 	@Override
 	public void preprocessSpecification(Specification userSpecification) {

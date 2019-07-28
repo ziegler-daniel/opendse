@@ -1,12 +1,10 @@
-package net.sf.opendse.encoding.routing;
+package net.sf.opendse.encoding.preprocessing;
 
 import java.util.HashSet;
 import java.util.Set;
 
 import com.google.inject.Inject;
 
-import net.sf.opendse.encoding.preprocessing.SpecificationPreprocessorComposable;
-import net.sf.opendse.encoding.preprocessing.SpecificationPreprocessorMulti;
 import net.sf.opendse.model.Architecture;
 import net.sf.opendse.model.Link;
 import net.sf.opendse.model.Resource;
@@ -22,13 +20,20 @@ import net.sf.opendse.model.properties.ResourcePropertyService;
  * @author Fedor Smirnov
  *
  */
-public class ExpressSearch extends SpecificationPreprocessorComposable{
+public class ExpressSearch extends SpecificationPreprocessorComposable {
 
 	@Inject
 	public ExpressSearch(SpecificationPreprocessorMulti multiPreprocessor) {
 		multiPreprocessor.addPreprocessor(this);
 	}
-	
+
+	@Override
+	public int getPriority() {
+		// makes sure that the express links are annotated before (potentially) being
+		// removed
+		return ProxySearchReduction.PRIORITY - 1;
+	}
+
 	/**
 	 * Searches for the express resources in the architecture, marks them, and
 	 * annotates that the links within the express area do not offer routing
@@ -45,6 +50,65 @@ public class ExpressSearch extends SpecificationPreprocessorComposable{
 		for (Link l : expressLinks) {
 			ArchitectureElementPropertyService.setOfferRoutingVariety(l, false);
 		}
+		// annotate the express areas
+		annotateExpressAreas(specArch);
+	}
+
+	/**
+	 * Annotates the different express areas.
+	 * 
+	 * @param arch
+	 *            the spec architecture
+	 */
+	protected void annotateExpressAreas(Architecture<Resource, Link> arch) {
+		int curAreaIdx = 0;
+		boolean goOn = false;
+		do {
+			goOn = false;
+			for (Resource res : arch) {
+				if (ResourcePropertyService.isExpress(res) && ResourcePropertyService.getExpressAreaId(res) == -1) {
+					annotateExpressArea(res, arch, curAreaIdx++);
+					goOn = true;
+				}
+			}
+		} while (goOn);
+	}
+
+	/**
+	 * Annotates an express area starting from the given resource.
+	 * 
+	 * @param res
+	 *            the given resource
+	 * @param arch
+	 *            the routing graph
+	 * @param areaId
+	 *            the area id
+	 */
+	protected void annotateExpressArea(Resource res, Architecture<Resource, Link> arch, int areaId) {
+		Set<Resource> areaResources = new HashSet<Resource>();
+		areaResources.add(res);
+		ResourcePropertyService.setExpressAreaId(res, areaId);
+		int size = 1;
+		do {
+			size = areaResources.size();
+			Set<Resource> toAdd = new HashSet<Resource>();
+			for (Resource r : areaResources) {
+				for (Resource neighbor : arch.getNeighbors(r)) {
+					if (ResourcePropertyService.isExpress(neighbor)) {
+						if (ResourcePropertyService.getExpressAreaId(neighbor) == -1) {
+							// no id set yet
+							toAdd.add(neighbor);
+							ResourcePropertyService.setExpressAreaId(neighbor, areaId);
+						} else {
+							if (ResourcePropertyService.getExpressAreaId(neighbor) != areaId) {
+								throw new IllegalArgumentException("two indices within same express area");
+							}
+						}
+					}
+				}
+			}
+			areaResources.addAll(toAdd);
+		} while (size != areaResources.size());
 	}
 
 	/**

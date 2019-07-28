@@ -17,7 +17,7 @@ public class ResourcePropertyService extends AbstractPropertyService {
 
 	public enum ResourceAttributes {
 		PROXY_RESOURCE("proxy resource id"), PROXY_DISTANCE("proxy distance"), LOWER_RESOURCES(
-				"lower proxied resources"), EXPRESS_NODE("express node");
+				"lower proxied resources"), EXPRESS_NODE("express node"), EXPRESS_AREA("express area");
 		protected String xmlName;
 
 		private ResourceAttributes(String xmlName) {
@@ -138,6 +138,37 @@ public class ResourcePropertyService extends AbstractPropertyService {
 		Set<Resource> lowerResources = getLowerResources(resource);
 		lowerResources.add(lowerResource);
 		resource.setAttribute(attrName, lowerResources);
+	}
+
+	/**
+	 * Annotates the express area of the given resource
+	 * 
+	 * @param res
+	 *            the given resource
+	 * @param areaId
+	 *            the area id
+	 */
+	public static void setExpressAreaId(Resource res, int areaId) {
+		if (!isExpress(res)) {
+			throw new IllegalArgumentException("Only express resources can have an express area index");
+		}
+		String attrName = ResourceAttributes.EXPRESS_AREA.xmlName;
+		res.setAttribute(attrName, areaId);
+	}
+
+	/**
+	 * Returns the express area id of the given resource.
+	 * 
+	 * @param res
+	 *            the given resource
+	 * @return the express area id of the given resource
+	 */
+	public static int getExpressAreaId(Resource res) {
+		if (!isExpress(res)) {
+			throw new IllegalArgumentException("Only express resources can have an express area index");
+		}
+		String attrName = ResourceAttributes.EXPRESS_AREA.xmlName;
+		return isAttributeSet(res, attrName) ? ((Integer) res.getAttribute(attrName)) : -1;
 	}
 
 	/**

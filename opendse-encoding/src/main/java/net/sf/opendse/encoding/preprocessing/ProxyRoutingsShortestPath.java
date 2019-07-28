@@ -14,9 +14,18 @@ import net.sf.opendse.model.Resource;
 import net.sf.opendse.model.properties.ArchitectureElementPropertyService;
 import net.sf.opendse.model.properties.ResourcePropertyService;
 
+/**
+ * The {@link ProxyRoutingsShortestPath} is used for the preprocessing of the
+ * architecture graph. It categorizes the resources based on their proxy and
+ * finds the shortest path between each proxy and its proxy master, as well as
+ * the paths between proxy slaves sharing the same master.
+ * 
+ * @author Fedor Smirnov
+ *
+ */
 public class ProxyRoutingsShortestPath implements ProxyRoutings {
 
-	class Connection {
+	static class Connection {
 		protected Resource src;
 		protected Resource dest;
 
@@ -29,7 +38,7 @@ public class ProxyRoutingsShortestPath implements ProxyRoutings {
 		public int hashCode() {
 			final int prime = 31;
 			int result = 1;
-			result = prime * result + getOuterType().hashCode();
+			result = prime * result;
 			result = prime * result + ((dest == null) ? 0 : dest.hashCode());
 			result = prime * result + ((src == null) ? 0 : src.hashCode());
 			return result;
@@ -44,8 +53,6 @@ public class ProxyRoutingsShortestPath implements ProxyRoutings {
 			if (getClass() != obj.getClass())
 				return false;
 			Connection other = (Connection) obj;
-			if (!getOuterType().equals(other.getOuterType()))
-				return false;
 			if (dest == null) {
 				if (other.dest != null)
 					return false;
@@ -59,9 +66,6 @@ public class ProxyRoutingsShortestPath implements ProxyRoutings {
 			return true;
 		}
 
-		private ProxyRoutingsShortestPath getOuterType() {
-			return ProxyRoutingsShortestPath.this;
-		}
 	}
 
 	protected final Map<Resource, Set<DirectedLink>> resource2ProxyMap = new HashMap<Resource, Set<DirectedLink>>();
@@ -75,14 +79,16 @@ public class ProxyRoutingsShortestPath implements ProxyRoutings {
 	public ProxyRoutingsShortestPath(Architecture<Resource, Link> architecture) {
 		// find all invariant links
 		for (Link l : architecture.getEdges()) {
-			if(!ArchitectureElementPropertyService.getOffersRoutingVariety(l)) {
-				DirectedLink first = new DirectedLink(l, architecture.getEndpoints(l).getFirst(), architecture.getEndpoints(l).getSecond());
-				DirectedLink second = new DirectedLink(l, architecture.getEndpoints(l).getSecond(), architecture.getEndpoints(l).getFirst());
+			if (!ArchitectureElementPropertyService.getOffersRoutingVariety(l)) {
+				DirectedLink first = new DirectedLink(l, architecture.getEndpoints(l).getFirst(),
+						architecture.getEndpoints(l).getSecond());
+				DirectedLink second = new DirectedLink(l, architecture.getEndpoints(l).getSecond(),
+						architecture.getEndpoints(l).getFirst());
 				invariantLinks.add(first);
 				invariantLinks.add(second);
 			}
 		}
-		
+
 		// find all proxies
 		Set<String> proxies = new HashSet<String>();
 		for (Resource res : architecture) {
@@ -90,7 +96,7 @@ public class ProxyRoutingsShortestPath implements ProxyRoutings {
 				proxies.add(ResourcePropertyService.getProxyId(res));
 			}
 		}
-		
+
 		for (DirectedLink dl : invariantLinks) {
 			Resource first = dl.getSource();
 			Resource second = dl.getDest();
@@ -108,7 +114,7 @@ public class ProxyRoutingsShortestPath implements ProxyRoutings {
 				proxyLinkMap.get(proxy).add(dl);
 			}
 		}
-		
+
 		// group the resources into sets according to their proxies
 		Map<Resource, Set<Resource>> proxy2ResourcesMap = new HashMap<Resource, Set<Resource>>();
 		for (Resource res : architecture) {
@@ -143,7 +149,7 @@ public class ProxyRoutingsShortestPath implements ProxyRoutings {
 				}
 			}
 		}
-		
+
 		// fill the maps of the resources relevant to the directed links
 		for (Entry<Resource, Set<DirectedLink>> srcEntry : resource2ProxyMap.entrySet()) {
 			Resource src = srcEntry.getKey();

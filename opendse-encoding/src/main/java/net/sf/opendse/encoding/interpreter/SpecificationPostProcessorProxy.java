@@ -85,6 +85,17 @@ public class SpecificationPostProcessorProxy extends SpecificationPostProcessorC
 		return;
 	}
 
+	/**
+	 * Adds the given link to the architecture and the provided routing while
+	 * upholding the parent-child relation between the two graphs.
+	 * 
+	 * @param dLink
+	 *            the directed link
+	 * @param arch
+	 *            the architecture graph
+	 * @param routing
+	 *            the routing graph
+	 */
 	protected void addLinkToImplementation(DirectedLink dLink, Architecture<Resource, Link> arch,
 			Architecture<Resource, Link> routing) {
 		if (!arch.containsEdge(dLink.getLink())) {
