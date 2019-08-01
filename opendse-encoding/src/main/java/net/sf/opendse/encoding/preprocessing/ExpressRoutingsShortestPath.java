@@ -46,12 +46,15 @@ public class ExpressRoutingsShortestPath implements ExpressRoutings {
 		// iterate each pair
 		for (Resource src : nonExpress) {
 			for (Resource dest : nonExpress) {
-				if (src.equals(dest))
+				Connection connection = new Connection(src, dest);
+				if (src.equals(dest)) {
+					// same src and dest => empty set
+					result.put(connection, new HashSet<DirectedLink>());
 					continue;
+				}
 				// find the shortest path in the routing
 				Architecture<Resource, Link> shortestPath = RoutingSearch.findShortestPath(src, dest, arch);
 				// collect the express links on the path
-				Connection connection = new Connection(src, dest);
 				result.put(connection, findExpressLinksInShortestPath(shortestPath, src));
 			}
 		}
