@@ -9,6 +9,7 @@ import net.sf.opendse.encoding.RoutingEncoding;
 import net.sf.opendse.encoding.routing.res.ProxyRoutingExpressTestRes;
 import net.sf.opendse.encoding.variables.ApplicationVariable;
 import net.sf.opendse.encoding.variables.CLRR;
+import net.sf.opendse.encoding.variables.CR;
 import net.sf.opendse.encoding.variables.MappingVariable;
 import net.sf.opendse.encoding.variables.Variables;
 import net.sf.opendse.model.Application;
@@ -85,6 +86,8 @@ public class ProxyRoutingExpressTest {
 		Resource r10 = arch.getVertex("r10");
 		Resource r11 = arch.getVertex("r11");
 		Resource r12 = arch.getVertex("r12");
+		Resource r13 = arch.getVertex("r13");
+		Resource r14 = arch.getVertex("r14");
 
 		Link l0 = arch.getEdge("l0");
 		Link l1 = arch.getEdge("l1");
@@ -115,7 +118,8 @@ public class ProxyRoutingExpressTest {
 		// CR cr9 = Variables.varCR(comm, r9);
 		// CR cr10 = Variables.varCR(comm, r10);
 		// CR cr11 = Variables.varCR(comm, r11);
-		// CR cr12 = Variables.varCR(comm, r12);
+		CR cr13 = Variables.varCR(comm, r13);
+		CR cr14 = Variables.varCR(comm, r14);
 
 		CLRR clrr0I = Variables.varCLRR(comm, l0, r0, r2);
 		CLRR clrr1I = Variables.varCLRR(comm, l1, r1, r2);
@@ -186,6 +190,9 @@ public class ProxyRoutingExpressTest {
 		verifierUnredundantLazy.verifyVariableNotFixed(clrr7I);
 		verifierUnredundantLazy.verifyVariableNotFixed(clrr7II);
 
+		verifierUnredundantLazy.verifyVariableDeactivated(cr13);
+		verifierUnredundantLazy.verifyVariableDeactivated(cr14);
+
 		// redundant test lazy
 		// proxy areas
 		verifierRedundantLazy.verifyVariableNotFixed(clrr0I);
@@ -223,6 +230,9 @@ public class ProxyRoutingExpressTest {
 		verifierRedundantLazy.verifyVariableNotFixed(clrr6II);
 		verifierRedundantLazy.verifyVariableNotFixed(clrr7I);
 		verifierRedundantLazy.verifyVariableNotFixed(clrr7II);
+
+		verifierRedundantLazy.verifyVariableDeactivated(cr13);
+		verifierRedundantLazy.verifyVariableDeactivated(cr14);
 
 		// unredundant test compact
 
@@ -264,6 +274,9 @@ public class ProxyRoutingExpressTest {
 		verifierUnredundantCompact.verifyVariableActivated(clrr7I);
 		verifierUnredundantCompact.verifyVariableDeactivated(clrr7II);
 
+		verifierUnredundantCompact.verifyVariableDeactivated(cr13);
+		verifierUnredundantCompact.verifyVariableDeactivated(cr14);
+
 		// redundant test compact
 		// force redundancy
 		verifierRedundantCompact.activateVariable(clrr2I);
@@ -296,11 +309,14 @@ public class ProxyRoutingExpressTest {
 		verifierRedundantCompact.verifyVariableDeactivated(clrr13II);
 		verifierRedundantCompact.verifyVariableActivated(clrr12I);
 		verifierRedundantCompact.verifyVariableDeactivated(clrr12II);
-		
+
 		// express test
-		 verifierRedundantCompact.verifyVariableActivated(clrr6I);
-		 verifierRedundantCompact.verifyVariableDeactivated(clrr6II);
-		 verifierRedundantCompact.verifyVariableActivated(clrr7I);
-		 verifierRedundantCompact.verifyVariableDeactivated(clrr7II);
+		verifierRedundantCompact.verifyVariableActivated(clrr6I);
+		verifierRedundantCompact.verifyVariableDeactivated(clrr6II);
+		verifierRedundantCompact.verifyVariableActivated(clrr7I);
+		verifierRedundantCompact.verifyVariableDeactivated(clrr7II);
+
+		verifierRedundantCompact.verifyVariableDeactivated(cr13);
+		verifierRedundantCompact.verifyVariableDeactivated(cr14);
 	}
 }

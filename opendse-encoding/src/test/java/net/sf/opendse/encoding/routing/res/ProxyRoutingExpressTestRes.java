@@ -58,6 +58,13 @@ public class ProxyRoutingExpressTestRes {
 		Resource r11 = new Resource("r11");
 		Resource r12 = new Resource("r12");
 		
+		Resource r13 = new Resource("r13");
+		Resource r14 = new Resource("r14");
+		Resource r15 = new Resource("r15");
+		Resource r16 = new Resource("r16");
+		Resource r17 = new Resource("r17");
+		Resource r18 = new Resource("r18");
+		
 		ResourcePropertyService.setProxyId(r0, r2);
 		ResourcePropertyService.setProxyId(r1, r2);
 		ResourcePropertyService.setProxyId(r11, r10);
@@ -80,6 +87,13 @@ public class ProxyRoutingExpressTestRes {
 		Link l12 = new Link("l12");
 		Link l13 = new Link("l13");
 		
+		Link l14 = new Link("l14");
+		Link l15 = new Link("l15");
+		Link l16 = new Link("l16");
+		Link l17 = new Link("l17");
+		Link l18 = new Link("l18");
+		Link l19 = new Link("l19");
+		
 		ArchitectureElementPropertyService.setOfferRoutingVariety(l0, false);
 		ArchitectureElementPropertyService.setOfferRoutingVariety(l1, false);
 		ArchitectureElementPropertyService.setOfferRoutingVariety(l6, false);
@@ -101,6 +115,13 @@ public class ProxyRoutingExpressTestRes {
 		arch.addEdge(l11, r9, r10, EdgeType.UNDIRECTED);
 		arch.addEdge(l12, r10, r11, EdgeType.UNDIRECTED);
 		arch.addEdge(l13, r10, r12, EdgeType.UNDIRECTED);
+		
+		arch.addEdge(l14, r6, r13, EdgeType.UNDIRECTED);
+		arch.addEdge(l15, r6, r14, EdgeType.UNDIRECTED);
+		arch.addEdge(l16, r13, r15, EdgeType.UNDIRECTED);
+		arch.addEdge(l17, r13, r16, EdgeType.UNDIRECTED);
+		arch.addEdge(l18, r14, r17, EdgeType.UNDIRECTED);
+		arch.addEdge(l19, r14, r18, EdgeType.UNDIRECTED);
 		
 		// mapping
 		Mappings<Task, Resource> mappings = new Mappings<Task, Resource>();
