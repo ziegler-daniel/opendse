@@ -205,6 +205,9 @@ public class ConstraintsTest {
 		verifyImplication.verifyVariableActivated(b);
 		ConstraintVerifier verifyFreedom = new ConstraintVerifier(new HashSet<Object>(), activated, posImplication);
 		verifyFreedom.verifyVariableNotFixed(b);
+		ConstraintVerifier verifyReverseDir = new ConstraintVerifier(posImplication);
+		verifyReverseDir.deactivateVariable(b);
+		verifyReverseDir.verifyVariableDeactivated(a);
 	}
 
 }

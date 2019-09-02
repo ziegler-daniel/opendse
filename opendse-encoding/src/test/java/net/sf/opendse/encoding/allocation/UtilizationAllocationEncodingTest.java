@@ -26,7 +26,7 @@ import verification.ConstraintVerifier;
 public class UtilizationAllocationEncodingTest {
 
 	@Test
-	public void test() {
+	public void testMappingToEncoding() {
 		Resource r0 = new Resource("r0");
 		Resource r1 = new Resource("r1");
 		Resource r2 = new Resource("r2");
@@ -73,11 +73,17 @@ public class UtilizationAllocationEncodingTest {
 		deactivated.add(cl1_b);
 		deactivated.add(cl1_f);
 		deactivated.add(cr2);
+		// tests that the usage of resources results in their allocation
 		ConstraintVerifier verifyAllocation = new ConstraintVerifier(activated, deactivated, cs);
 		verifyAllocation.verifyVariableActivated(Variables.varR(r1));
 		verifyAllocation.verifyVariableActivated(Variables.varR(r0));
 		verifyAllocation.verifyVariableDeactivated(Variables.varR(r2));
 		verifyAllocation.verifyVariableActivated(Variables.varL(l0));
 		verifyAllocation.verifyVariableDeactivated(Variables.varL(l1));
+		// tests that not allocated resources cannot be used
+		ConstraintVerifier verifyUnallocatedNotUsable = new ConstraintVerifier(cs);
+		verifyUnallocatedNotUsable.deactivateVariable(Variables.varR(r1));
+		verifyUnallocatedNotUsable.verifyVariableDeactivated(cr1);
+		verifyUnallocatedNotUsable.verifyVariableDeactivated(mVar0);
 	}
 }
