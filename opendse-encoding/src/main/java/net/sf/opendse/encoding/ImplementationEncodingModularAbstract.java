@@ -65,7 +65,7 @@ public abstract class ImplementationEncodingModularAbstract implements Implement
 	}
 
 	@Override
-	public final Set<Constraint> toConstraints() {
+	public Set<Constraint> toConstraints() {
 		return this.constraints;
 	}
 
