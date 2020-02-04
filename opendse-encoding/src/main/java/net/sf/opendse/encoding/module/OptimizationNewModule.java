@@ -73,7 +73,7 @@ public class OptimizationNewModule extends ProblemModule {
 	}
 
 	protected ChosenAllocationEncoding allocationEncoding = ChosenAllocationEncoding.UTILIZATION;
-	
+
 	protected ChosenRoutingEncoding routingEncodingType = ChosenRoutingEncoding.FLEXIBLE;
 
 	protected RoutingEncoding routingEncoding = RoutingEncoding.FLOW;
@@ -158,6 +158,14 @@ public class OptimizationNewModule extends ProblemModule {
 		this.allocationEncoding = allocationEncoding;
 	}
 
+	public ChosenRoutingEncoding getRoutingEncodingType() {
+		return routingEncodingType;
+	}
+
+	public void setRoutingEncodingType(ChosenRoutingEncoding routingEncodingType) {
+		this.routingEncodingType = routingEncodingType;
+	}
+
 	@Override
 	protected void config() {
 		bindProblem(DesignSpaceExplorationCreator.class, DesignSpaceExplorationDecoder.class,
@@ -226,7 +234,7 @@ public class OptimizationNewModule extends ProblemModule {
 
 		case FLEXIBLE:
 			bind(net.sf.opendse.encoding.RoutingEncoding.class).to(RoutingEncodingFlexible.class);
-			
+
 		case CUSTOM:
 			// no binding, done elsewhere
 			break;
