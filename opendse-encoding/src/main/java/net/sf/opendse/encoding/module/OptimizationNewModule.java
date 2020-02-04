@@ -1,11 +1,16 @@
 package net.sf.opendse.encoding.module;
 
 import net.sf.opendse.encoding.ImplementationEncodingModularDefault;
+import net.sf.opendse.encoding.allocation.AllocationEncodingNone;
+import net.sf.opendse.encoding.allocation.AllocationEncodingUtilization;
+import net.sf.opendse.encoding.AllocationEncoding;
 import net.sf.opendse.encoding.ImplementationEncodingModular;
 import net.sf.opendse.encoding.interpreter.InterpreterVariable;
 import net.sf.opendse.encoding.interpreter.SpecificationPostProcessorCycleRemover;
 import net.sf.opendse.encoding.routing.CycleBreakEncoder;
 import net.sf.opendse.encoding.routing.CycleBreakEncoderNone;
+import net.sf.opendse.encoding.routing.RoutingEncodingFlexible;
+import net.sf.opendse.encoding.routing.RoutingEncodingNone;
 import net.sf.opendse.optimization.DesignSpaceExplorationCreator;
 import net.sf.opendse.optimization.DesignSpaceExplorationDecoder;
 import net.sf.opendse.optimization.DesignSpaceExplorationEvaluator;
@@ -39,6 +44,37 @@ import com.google.inject.multibindings.Multibinder;
 
 @Parent(DesignSpaceExplorationModule.class)
 public class OptimizationNewModule extends ProblemModule {
+
+	/**
+	 * Different allocation encodings: NONE: Allocation not encoded, see
+	 * {@link AllocationEncodingNone} UTILIZATION: Everything that is used for
+	 * either tasks or messages allocated, see {@link AllocationEncodingUtilization}
+	 * CUSTOM: Allocation encoding chosen in a different module (e.g. outside the
+	 * opendse projects)
+	 * 
+	 * @author Fedor Smirnov
+	 *
+	 */
+	protected enum ChosenAllocationEncoding {
+		NONE, UTILIZATION, CUSTOM
+	}
+
+	/**
+	 * Different routing encodings: NONE: Routing not encoded, see
+	 * {@link RoutingEncodingNone} Flexible: Rather complex scheme, see
+	 * {@link AllocationEncodingUtilization} CUSTOM: Routing encoding chosen in a
+	 * different module (e.g. outside the opendse projects)
+	 * 
+	 * @author Fedor Smirnov
+	 *
+	 */
+	protected enum ChosenRoutingEncoding {
+		NONE, FLEXIBLE, CUSTOM
+	}
+
+	protected ChosenAllocationEncoding allocationEncoding = ChosenAllocationEncoding.UTILIZATION;
+	
+	protected ChosenRoutingEncoding routingEncodingType = ChosenRoutingEncoding.FLEXIBLE;
 
 	protected RoutingEncoding routingEncoding = RoutingEncoding.FLOW;
 
@@ -114,6 +150,14 @@ public class OptimizationNewModule extends ProblemModule {
 		this.maximalNumberStagnatingGenerations = maximalNumberStagnatingGenerations;
 	}
 
+	public ChosenAllocationEncoding getAllocationEncoding() {
+		return allocationEncoding;
+	}
+
+	public void setAllocationEncoding(ChosenAllocationEncoding allocationEncoding) {
+		this.allocationEncoding = allocationEncoding;
+	}
+
 	@Override
 	protected void config() {
 		bindProblem(DesignSpaceExplorationCreator.class, DesignSpaceExplorationDecoder.class,
@@ -155,6 +199,39 @@ public class OptimizationNewModule extends ProblemModule {
 		if (removeCyclesManually) {
 			bind(CycleBreakEncoder.class).to(CycleBreakEncoderNone.class);
 			bind(SpecificationPostProcessorCycleRemover.class).asEagerSingleton();
+		}
+
+		// bind the allocation encoder
+		switch (allocationEncoding) {
+		case UTILIZATION:
+			bind(AllocationEncoding.class).to(AllocationEncodingUtilization.class);
+			break;
+
+		case NONE:
+			bind(AllocationEncoding.class).to(AllocationEncodingNone.class);
+
+		case CUSTOM:
+			// do nothing, defined elsewhere
+			break;
+
+		default:
+			break;
+		}
+
+		// bind the routing encoder
+		switch (routingEncodingType) {
+		case NONE:
+			bind(net.sf.opendse.encoding.RoutingEncoding.class).to(RoutingEncodingNone.class);
+			break;
+
+		case FLEXIBLE:
+			bind(net.sf.opendse.encoding.RoutingEncoding.class).to(RoutingEncodingFlexible.class);
+			
+		case CUSTOM:
+			// no binding, done elsewhere
+			break;
+		default:
+			break;
 		}
 	}
 }

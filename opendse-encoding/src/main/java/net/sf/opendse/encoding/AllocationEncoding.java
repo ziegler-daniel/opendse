@@ -24,7 +24,6 @@ import net.sf.opendse.encoding.variables.RoutingVariable;
  * @author Fedor Smirnov
  *
  */
-@ImplementedBy(AllocationEncodingUtilization.class)
 public interface AllocationEncoding {
 
 	/**
