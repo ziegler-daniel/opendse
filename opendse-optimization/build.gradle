@@ -3,7 +3,7 @@ dependencies {
 	compile project(':opendse-io')
 	compile project(':opendse-visualization')
 	
-	compile 'com.github.felixreimann:opt4j:v3.2'
+	implementation 'com.github.FedorSmirnov89:opt4j:-SNAPSHOT'
 	
 	testCompile 'junit:junit:4.12'
 	testCompile group: 'org.mockito', name: 'mockito-core', version: '2.22.0'
