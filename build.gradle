@@ -47,8 +47,8 @@ subprojects {
 	
     version = parent.version
 
-    sourceCompatibility = 1.11
-	targetCompatibility = 1.11
+    sourceCompatibility = 11
+	targetCompatibility = 11
 	
 	task sourcesJar(type: Jar, dependsOn:classes) {
 		from sourceSets.main.allSource 
