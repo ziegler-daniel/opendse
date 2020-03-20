@@ -110,16 +110,16 @@ subprojects {
 	    }
 	}
 	
-	jacocoTestReport {
-		additionalSourceDirs = files(sourceSets.main.allSource.srcDirs)
-		sourceDirectories = files(sourceSets.main.allSource.srcDirs)
-		classDirectories =  files(sourceSets.main.output)
-		reports {
-		    html.enabled = true
-		    xml.enabled = true
-		    csv.enabled = false
-		}
-	}
+//	jacocoTestReport {
+//		additionalSourceDirs = files(sourceSets.main.allSource.srcDirs)
+//		sourceDirectories = files(sourceSets.main.allSource.srcDirs)
+//		classDirectories =  files(sourceSets.main.output)
+//		reports {
+//		    html.enabled = true
+//		    xml.enabled = true
+//		    csv.enabled = false
+//		}
+//	}
 }
 
 /* for now ignore all javadoc errors in case of Java 8 */
@@ -214,32 +214,32 @@ task website(dependsOn: [copyWebsite, copyJavadoc]) {}
 
 task release(dependsOn: [fatjar,website] ){}
 
-task wrapper(type: Wrapper) {
-    gradleVersion = '4.4.1'
-}
+//task wrapper(type: Wrapper) {
+//    gradleVersion = '4.4.1'
+//}
 
-task jacocoRootReport(type: org.gradle.testing.jacoco.tasks.JacocoReport) {
-    dependsOn = subprojects.test
-    additionalSourceDirs = files(subprojects.sourceSets.main.allSource.srcDirs)
-    sourceDirectories = files(subprojects.sourceSets.main.allSource.srcDirs)
-    classDirectories = files(subprojects.sourceSets.main.output)
-    executionData = files(subprojects.jacocoTestReport.executionData)
-    reports {
-        html.enabled = true
-        xml.enabled = true
-        csv.enabled = false
-    }
-    onlyIf = {
-        true
-    }
-    doFirst {
-        executionData = files(executionData.findAll {
-            it.exists()
-        })
-    }
-    afterEvaluate {
-        classDirectories = files(classDirectories.files.collect {
-            fileTree(dir: it, exclude: ['ptolemy/**', 'org/opt4j/tutorial/**', 'org/opt4j/viewer/**', 'org/opt4j/core/config/visualization/**'])
-        })
-    }
-}
+//task jacocoRootReport(type: org.gradle.testing.jacoco.tasks.JacocoReport) {
+//   dependsOn = subprojects.test
+//    additionalSourceDirs = files(subprojects.sourceSets.main.allSource.srcDirs)
+//   sourceDirectories = files(subprojects.sourceSets.main.allSource.srcDirs)
+//    classDirectories = files(subprojects.sourceSets.main.output)
+//    executionData = files(subprojects.jacocoTestReport.executionData)
+//    reports {
+//        html.enabled = true
+//        xml.enabled = true
+//        csv.enabled = false
+//    }
+//    onlyIf = {
+//        true
+//    }
+//    doFirst {
+//        executionData = files(executionData.findAll {
+//            it.exists()
+//        })
+//    }
+//    afterEvaluate {
+//        classDirectories = files(classDirectories.files.collect {
+//            fileTree(dir: it, exclude: ['ptolemy/**', 'org/opt4j/tutorial/**', 'org/opt4j/viewer/**', 'org/opt4j/core/config/visualization/**'])
+//        })
+//    }
+//}

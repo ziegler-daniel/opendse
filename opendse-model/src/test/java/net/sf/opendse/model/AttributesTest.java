@@ -31,7 +31,7 @@ public class AttributesTest {
 		Parameter parameter = new ParameterRange(1.0, 0.0, 2.0);
 		attributes.setAttribute(id, parameter);
 
-		Assert.assertEquals(1.0, attributes.getAttribute(id));
+		Assert.assertEquals(1.0, attributes.getAttribute(id),.0);
 	}
 
 	/**

@@ -376,7 +376,7 @@ public class ReaderTGFFTest {
 		reader.addDeadline(line, suffix, application, deadlineType);
 
 		Assert.assertNotNull(application.iterator().next().getAttribute(deadlineType));
-		Assert.assertEquals(0.0003, application.iterator().next().getAttribute(deadlineType));
+		Assert.assertEquals(0.0003, application.iterator().next().getAttribute(deadlineType), .0);
 	}
 
 	/**
@@ -450,8 +450,8 @@ public class ReaderTGFFTest {
 
 		Resource resource = resourceTypes.get(id);
 
-		Assert.assertEquals(79.0597, resource.getAttribute("price"));
-		Assert.assertEquals(0.219023, resource.getAttribute("area"));
+		Assert.assertEquals(79.0597, resource.getAttribute("price"), .0);
+		Assert.assertEquals(0.219023, resource.getAttribute("area"), .0);
 	}
 
 	/**
