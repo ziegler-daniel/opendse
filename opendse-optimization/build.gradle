@@ -5,7 +5,6 @@ dependencies {
 	
 	implementation 'com.github.FedorSmirnov89:opt4j:-SNAPSHOT'
 	
-	implementation	group: 'com.google.inject', name: 'guice', version: '4.2.1'
 	testCompile 'junit:junit:4.12'
 	testCompile group: 'org.mockito', name: 'mockito-core', version: '2.22.0'
 }

@@ -2,7 +2,6 @@ dependencies {
 	compile project(':opendse-model')
 	compile project(':opendse-io')
 	
-	implementation	group: 'com.google.inject', name: 'guice', version: '4.2.1'
 	compile group: 'net.sf.jung',	name: 'jung-visualization', 	version: '2.0.1'
 
 	compile group: 'net.java.dev.glazedlists',	name: 'glazedlists_java15', 		version: '1.9.0'
