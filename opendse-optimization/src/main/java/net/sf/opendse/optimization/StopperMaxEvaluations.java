@@ -42,7 +42,7 @@ public class StopperMaxEvaluations implements IndividualStateListener {
 	}
 
 	@Override
-	public synchronized void inidividualStateChanged(Individual individual) {
+	public synchronized void individualStateChanged(Individual individual) {
 		if (individual.getState().isEvaluated()) {
 			evaluations++;
 			if(evaluations >= maxEvaluations){

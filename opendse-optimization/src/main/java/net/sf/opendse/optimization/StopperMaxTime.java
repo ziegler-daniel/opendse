@@ -43,7 +43,7 @@ public class StopperMaxTime implements IndividualStateListener {
 	}
 
 	@Override
-	public void inidividualStateChanged(Individual individual) {
+	public void individualStateChanged(Individual individual) {
 		long diff = (System.currentTimeMillis() - startTime) / 1000;
 
 		if (diff >= maxTime) {
