@@ -121,7 +121,7 @@ public class OptimizationModule extends ProblemModule {
 		}
 		bind(RoutingEncoding.class).toInstance(routingEncoding);
 		if (useVariableOrder) {
-			bind(RoutingVariableClassOrder.class).asEagerSingleton();
+			bind(ClassOrderInit.class).to(ClassOrderInitRouting.class);
 		}
 		bind(Interpreter.class).to(InterpreterSpecification.class);
 		bind(ImplementationEncoding.class).to(Encoding.class);

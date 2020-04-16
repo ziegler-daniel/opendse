@@ -11,13 +11,14 @@ import net.sf.opendse.encoding.routing.CycleBreakEncoder;
 import net.sf.opendse.encoding.routing.CycleBreakEncoderNone;
 import net.sf.opendse.encoding.routing.RoutingEncodingFlexible;
 import net.sf.opendse.encoding.routing.RoutingEncodingNone;
+import net.sf.opendse.optimization.ClassOrderInit;
+import net.sf.opendse.optimization.ClassOrderInitRouting;
 import net.sf.opendse.optimization.DesignSpaceExplorationCreator;
 import net.sf.opendse.optimization.DesignSpaceExplorationDecoder;
 import net.sf.opendse.optimization.DesignSpaceExplorationEvaluator;
 import net.sf.opendse.optimization.DesignSpaceExplorationModule;
 import net.sf.opendse.optimization.ImplementationEvaluator;
 import net.sf.opendse.optimization.ImplementationWidgetService;
-import net.sf.opendse.optimization.RoutingVariableClassOrder;
 import net.sf.opendse.optimization.SATConstraints;
 import net.sf.opendse.optimization.SATCreatorDecoder;
 import net.sf.opendse.optimization.SpecificationToolBarService;
@@ -191,7 +192,7 @@ public class OptimizationNewModule extends ProblemModule {
 		if (!useModularEncoding) {
 			bind(RoutingEncoding.class).toInstance(routingEncoding);
 			if (useVariableOrder) {
-				bind(RoutingVariableClassOrder.class).asEagerSingleton();
+				bind(ClassOrderInit.class).to(ClassOrderInitRouting.class);
 			}
 			bind(Interpreter.class).to(InterpreterSpecification.class);
 			bind(ImplementationEncoding.class).to(Encoding.class);

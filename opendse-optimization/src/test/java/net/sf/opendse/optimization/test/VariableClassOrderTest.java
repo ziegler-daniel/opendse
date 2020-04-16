@@ -10,6 +10,8 @@ import net.sf.opendse.model.Link;
 import net.sf.opendse.model.Mapping;
 import net.sf.opendse.model.Resource;
 import net.sf.opendse.model.Task;
+import net.sf.opendse.optimization.ClassOrderInitObject;
+import net.sf.opendse.optimization.ClassOrderInitRouting;
 import net.sf.opendse.optimization.VariableClassOrder;
 import net.sf.opendse.optimization.encoding.variables.EAVI;
 
@@ -22,7 +24,7 @@ import net.sf.opendse.optimization.encoding.variables.EAVI;
 public class VariableClassOrderTest {
 	@Test
 	public void testVariableClassOrder() {
-		VariableClassOrder order = new VariableClassOrder();
+		VariableClassOrder order = new VariableClassOrder(new ClassOrderInitObject());
 		assertEquals(0, order.indexOf(new Resource("Mockup")));
 		assertEquals(0, order.indexOf(new Link("Mockup")));
 		assertEquals(0, order.indexOf(new Task("Mockup")));
@@ -30,7 +32,7 @@ public class VariableClassOrderTest {
 
 	@Test
 	public void testIndexOfObject() {
-		VariableClassOrder order = new VariableClassOrder();
+		VariableClassOrder order = new VariableClassOrder(new ClassOrderInitObject());
 		// in the default case, everything should return 0
 		assertEquals(0, order.indexOf(new Resource("Mockup")));
 		assertEquals(0, order.indexOf(new Link("Mockup")));
@@ -44,7 +46,7 @@ public class VariableClassOrderTest {
 
 	@Test
 	public void testAddVariableClass() {
-		VariableClassOrder order = new VariableClassOrder();
+		VariableClassOrder order = new VariableClassOrder(new ClassOrderInitObject());
 		order.add(Resource.class);
 		order.add(EAVI.class);
 		order.add(Mapping.class);
@@ -61,8 +63,17 @@ public class VariableClassOrderTest {
 
 	@Test
 	public void testGetSize() {
-		VariableClassOrder order = new VariableClassOrder();
+		VariableClassOrder order = new VariableClassOrder(new ClassOrderInitObject());
 		order.add(Resource.class);
 		assertEquals(1, order.getOrderSize());
+	}
+
+	@Test
+	public void testOrderRouting() {
+		VariableClassOrder order = new VariableClassOrder(new ClassOrderInitRouting());
+		boolean firstRelationCorrect = order.indexOf(new Task("Mockup")) < order.indexOf(new Resource("Mockup"));
+		boolean secondRelationCorrect = order.indexOf(new Task("Mockup")) < order.indexOf(new Link("Mockup"));
+		assertTrue(firstRelationCorrect);
+		assertTrue(secondRelationCorrect);
 	}
 }

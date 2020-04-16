@@ -33,8 +33,10 @@ public class VariableClassOrder {
 	 * b) no fix order is specified for setting the variables by the SAT-solver.
 	 */
 	@Inject
-	public VariableClassOrder() {
-		order.add(Object.class);
+	public VariableClassOrder(ClassOrderInit orderInit) {
+		for (Class<?> clazz : orderInit.getClassList()) {
+			order.add(clazz);
+		}
 	}
 
 	/**
