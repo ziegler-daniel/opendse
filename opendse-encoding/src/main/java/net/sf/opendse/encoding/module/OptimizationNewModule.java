@@ -201,7 +201,7 @@ public class OptimizationNewModule extends ProblemModule {
 			bind(ImplementationEncoding.class).to(ImplementationEncodingModular.class);
 			bind(ImplementationEncodingModular.class).to(ImplementationEncodingModularDefault.class);
 			if (useVariableOrder) {
-				bind(VariableClassOrderModular.class).asEagerSingleton();
+				bind(ClassOrderInit.class).to(ClassOrderInitModular.class);
 			}
 		}
 
