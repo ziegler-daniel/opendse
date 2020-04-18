@@ -3,8 +3,6 @@ package net.sf.opendse.encoding.preprocessing;
 import java.util.HashSet;
 import java.util.Set;
 
-import com.google.inject.Inject;
-
 import net.sf.opendse.model.Architecture;
 import net.sf.opendse.model.Link;
 import net.sf.opendse.model.Resource;
@@ -22,11 +20,6 @@ import net.sf.opendse.model.properties.ResourcePropertyService;
 public class ProxySearch extends SpecificationPreprocessorComposable{
 
 	protected final String specProcessedAttribute = "spec proxy processed";
-	
-	@Inject
-	public ProxySearch(SpecificationPreprocessorMulti multiPreprocessor) {
-		multiPreprocessor.addPreprocessor(this);
-	}
 	
 	@Override
 	public void preprocessSpecification(Specification userSpecification) {

@@ -4,8 +4,6 @@ import org.opt4j.core.config.Icons;
 import org.opt4j.core.config.annotations.Icon;
 import org.opt4j.core.config.annotations.Name;
 import org.opt4j.core.config.annotations.Parent;
-import org.opt4j.core.start.Opt4JModule;
-
 import net.sf.opendse.encoding.interpreter.SpecificationPostProcessorProxy;
 import net.sf.opendse.encoding.preprocessing.ProxySearch;
 import net.sf.opendse.encoding.preprocessing.ProxySearchReduction;
@@ -22,7 +20,7 @@ import net.sf.opendse.optimization.DesignSpaceExplorationModule;
  */
 @Parent(DesignSpaceExplorationModule.class)
 @Icon(Icons.PROBLEM)
-public class ProxyRoutingModule extends Opt4JModule {
+public class ProxyRoutingModule extends AbstractPreprocessorModule {
 
 	@Name("activate the elements in the proxy areas")
 	protected boolean activateProxyAreas = true;
@@ -39,10 +37,10 @@ public class ProxyRoutingModule extends Opt4JModule {
 	protected void config() {
 		if (!activateProxyAreas) {
 			bind(ProxyEncoder.class).to(ProxyEncoderLazy.class);
-			bind(ProxySearchReduction.class).asEagerSingleton();
+			addPreprocessor(ProxySearchReduction.class);
 			bind(SpecificationPostProcessorProxy.class).asEagerSingleton();
 		} else {
-			bind(ProxySearch.class).asEagerSingleton();
+			addPreprocessor(ProxySearch.class);
 		}
 	}
 }

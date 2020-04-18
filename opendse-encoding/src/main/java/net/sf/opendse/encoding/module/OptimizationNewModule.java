@@ -7,6 +7,7 @@ import net.sf.opendse.encoding.AllocationEncoding;
 import net.sf.opendse.encoding.ImplementationEncodingModular;
 import net.sf.opendse.encoding.interpreter.InterpreterVariable;
 import net.sf.opendse.encoding.interpreter.SpecificationPostProcessorCycleRemover;
+import net.sf.opendse.encoding.preprocessing.SpecificationPreprocessorComposable;
 import net.sf.opendse.encoding.routing.CycleBreakEncoder;
 import net.sf.opendse.encoding.routing.CycleBreakEncoderNone;
 import net.sf.opendse.encoding.routing.RoutingEncodingFlexible;
@@ -184,6 +185,7 @@ public class OptimizationNewModule extends ProblemModule {
 		scmulti.addBinding().to(SpecificationRouterConstraints.class);
 
 		Multibinder.newSetBinder(binder(), ImplementationEvaluator.class);
+		Multibinder.newSetBinder(binder(), SpecificationPreprocessorComposable.class);
 
 		if (stagnationRestartEnabled) {
 			addOptimizerIterationListener(StagnationRestart.class);

@@ -1,8 +1,8 @@
 package net.sf.opendse.encoding.preprocessing;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
+
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
@@ -14,23 +14,22 @@ import net.sf.opendse.model.Specification;
  * {@link SpecificationPreprocessor}s during one exploration. It also allows to
  * establish an order of the preprocessing.
  * 
- * @author smirnov
+ * @author Fedor Smirnov
  *
  */
 @Singleton
 public class SpecificationPreprocessorMulti implements SpecificationPreprocessor {
 
-	protected final List<SpecificationPreprocessorComposable> preprocessorList;
+	protected final Set<SpecificationPreprocessorComposable> preprocessors = new TreeSet<>();
 
 	@Inject
-	public SpecificationPreprocessorMulti() {
-		preprocessorList = new ArrayList<SpecificationPreprocessorComposable>();
+	public SpecificationPreprocessorMulti(Set<SpecificationPreprocessorComposable> preprocessors) {
+		this.preprocessors.addAll(preprocessors);
 	}
 
 	@Override
 	public void preprocessSpecification(Specification userSpecification) {
-		Collections.sort(preprocessorList);
-		for (SpecificationPreprocessorComposable preprocessor : preprocessorList) {
+		for (SpecificationPreprocessorComposable preprocessor : preprocessors) {
 			preprocessor.preprocessSpecification(userSpecification);
 		}
 	}
@@ -39,11 +38,9 @@ public class SpecificationPreprocessorMulti implements SpecificationPreprocessor
 	 * Adds the given {@link SpecificationPreprocessorComposable} to the list while
 	 * respecting its priority.
 	 * 
-	 * @param preprocessor
-	 *            the preprocessor to add to the list
+	 * @param preprocessor the preprocessor to add to the list
 	 */
 	public void addPreprocessor(SpecificationPreprocessorComposable preprocessor) {
-		preprocessorList.add(preprocessor);
+		preprocessors.add(preprocessor);
 	}
-
 }
