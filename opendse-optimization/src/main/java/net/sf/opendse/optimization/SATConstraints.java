@@ -63,7 +63,7 @@ public class SATConstraints {
 	@Inject
 	public SATConstraints(SpecificationWrapper specificationWrapper, ImplementationEncoding encoding, @Constant(value = "preprocessing", namespace = SATConstraints.class) boolean usePreprocessing) {
 		this(specificationWrapper, encoding, new ConstraintPreprocessing(true, true,
-				new Encoding.VariableComparator(), null, true), usePreprocessing);
+				new Encoding.VariableComparator(), null, false), usePreprocessing);
 		
 	}
 
